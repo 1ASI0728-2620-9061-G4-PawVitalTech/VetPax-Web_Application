@@ -1,0 +1,34 @@
+<div class="container">
+  <div class="left-side">
+    <img src="/assets/img/login-image.jpg" alt="Imagen de bienvenida" />
+  </div>
+  <div class="right-side">
+    <div class="form-box">
+      <div class="top-bar"><app-language-switcher class="custom-color"></app-language-switcher></div>
+      <div class="logo brand-logo" aria-label="VetPax"><mat-icon>pets</mat-icon><span>VetPax</span></div>
+      <p class="sign-up"><a routerLink="/sign-up">{{ 'sign-in.sign-up' | translate }}</a></p>
+      <p class="title">{{ 'sign-in.title' | translate }}</p>
+      <p class="sub-tittle">{{ 'sign-in.sub-title' | translate }}</p>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="form">
+        <mat-form-field class="full-width">
+          <mat-label>{{ 'sign-in.email' | translate }}</mat-label>
+          <mat-icon matPrefix>email</mat-icon>
+          <input matInput formControlName="email" type="email" autocomplete="email" />
+          @if (f.email.errors?.['required']) { <mat-error>{{ 'sign-in.errors.required' | translate }}</mat-error> }
+          @if (f.email.errors?.['email']) { <mat-error>{{ 'sign-in.errors.email' | translate }}</mat-error> }
+        </mat-form-field>
+        <mat-form-field class="full-width">
+          <mat-label>{{ 'sign-in.password' | translate }}</mat-label>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input matInput type="text" [disabled]="true" [placeholder]="'sign-in.keycloak-password' | translate" />
+          <mat-icon matSuffix>lock_outline</mat-icon>
+        </mat-form-field>
+        <button mat-flat-button color="primary" class="button-color" type="submit" [disabled]="loginForm.invalid || isLoading">
+          {{ 'sign-in.submit' | translate }}
+        </button>
+      </form>
+      <p class="register-text">{{ 'sign-in.secure-note' | translate }}</p>
+      @if (errorMessage) { <p class="auth-error" role="alert">{{ errorMessage }}</p> }
+    </div>
+  </div>
+</div>

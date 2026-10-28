@@ -1,0 +1,42 @@
+{
+  "sign-in": {
+    "sign-up": "Create Account",
+    "title": "Sign In",
+    "sub-title": "Enter your email to continue securely",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Continue with Keycloak",
+    "forgot-password": "Forgot my password?",
+    "errors": {
+      "required": "This field is required",
+      "email": "Enter a valid email",
+      "minlength": "Minimum {requiredLength} characters"
+    },
+    "success": "You have successfully signed in.",
+    "error": "Incorrect email or password. Please try again.",
+    "no-permission": "You do not have permission to access this section.",
+    "keycloak-password": "Entered in Keycloak",
+    "secure-note": "You enter your password securely on Keycloak."
+  },
+  "sign-up": {
+    "login": "Sign In",
+    "title": "Create Account",
+    "sub-title": "Create your account to continue with Keycloak",
+    "first-name": "First Name",
+    "last-name": "Last Name",
+    "email": "Email",
+    "password": "Password",
+    "terms": "Accept the terms and conditions",
+    "register": "Register",
+    "success": "Account created successfully.",
+    "error": "An error occurred during registration. Please try again.",
+    "email-exists": "This email is already registered. Please use another one.",
+    "invalid-data": "Invalid data. Please check the information entered.",
+    "errors": {
+      "required": "This field is required",
+      "invalid-email": "Enter a valid email",
+      "minlength": "Minimum 9 characters",
+      "accept-terms": "You must accept the terms"
+    }
+  }
+}

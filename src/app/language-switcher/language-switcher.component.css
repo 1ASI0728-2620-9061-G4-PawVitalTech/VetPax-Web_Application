@@ -1,0 +1,33 @@
+mat-button-toggle-group {
+  border: none;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+mat-button-toggle {
+  background-color: var(--color-secondary);
+  color: var(--color-primary-8);
+}
+
+mat-button-toggle.mat-button-toggle-checked {
+  background-color: var(--color-primary-8);
+  color: var(--color-secondary);
+}
+
+mat-button-toggle:not(.mat-button-toggle-checked):hover {
+  background-color: var(--color-primary-8) !important;
+  color: var(--color-secondary) !important;
+}
+
+/* checkmark */
+.mat-pseudo-checkbox-full,
+.mat-pseudo-checkbox-minimal {
+  color: var(--color-secondary) !important;
+  border-color: var(--color-secondary) !important;
+}
+
+.mat-pseudo-checkbox-full.mat-pseudo-checkbox-checked,
+.mat-pseudo-checkbox-minimal.mat-pseudo-checkbox-checked {
+  background-color: var(--color-secondary) !important;
+  border-color: var(--color-secondary) !important;
+}

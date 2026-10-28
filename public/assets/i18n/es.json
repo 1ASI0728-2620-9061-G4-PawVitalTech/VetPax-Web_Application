@@ -1,0 +1,42 @@
+{
+  "sign-in": {
+    "sign-up": "Crear Cuenta",
+    "title": "Iniciar Sesión",
+    "sub-title": "Ingresa tu correo para continuar de forma segura",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "submit": "Continuar con Keycloak",
+    "forgot-password": "¿Olvidé mi contraseña?",
+    "errors": {
+      "required": "Este campo es obligatorio",
+      "email": "Ingresa un correo válido",
+      "minlength": "Mínimo 9 caracteres"
+    },
+    "success": "Sesión iniciada correctamente.",
+    "error": "Correo o contraseña incorrectos. Intenta de nuevo.",
+    "no-permission": "No tienes permiso para acceder a esta sección.",
+    "keycloak-password": "Se ingresa en Keycloak",
+    "secure-note": "Tu contraseña se introduce de forma segura en Keycloak."
+  },
+  "sign-up": {
+    "login": "Iniciar Sesión",
+    "title": "Crear Cuenta",
+    "sub-title": "Registra tu cuenta para continuar con Keycloak",
+    "first-name": "Nombre",
+    "last-name": "Apellido",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "terms": "Aceptar los términos y condiciones",
+    "register": "Registrarme",
+    "success": "Cuenta creada correctamente.",
+    "error": "Ocurrió un error durante el registro. Intenta de nuevo.",
+    "email-exists": "Este correo ya está registrado. Usa otro.",
+    "invalid-data": "Datos inválidos. Revisa la información ingresada.",
+    "errors": {
+      "required": "Este campo es obligatorio",
+      "invalid-email": "Ingresa un correo válido",
+      "minlength": "Mínimo {requiredLength} caracteres",
+      "accept-terms": "Debes aceptar los términos"
+    }
+  }
+}

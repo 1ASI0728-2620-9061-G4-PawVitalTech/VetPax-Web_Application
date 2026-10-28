@@ -1,0 +1,131 @@
+:root {
+  /* ===== Primary ===== */
+  --color-primary: #1E293B;
+  --color-primary-1: #263347;
+  --color-primary-2: #2E3D54;
+  --color-primary-3: #3D5068;
+  --color-primary-4: #6B7F96;
+  --color-primary-8: #0D1520;
+  --color-primary-9: #13111c;
+
+  /* ===== Secondary (Teal) ===== */
+  --color-secondary: #14B8A6;
+  --color-secondary-1: #0D9488;
+  --color-secondary-2: #0F766E;
+  --color-secondary-3: #115E59;
+  --color-secondary-4: #134E4A;
+
+  /* ===== Tertiary (Sky Blue) ===== */
+  --color-tertiary: #38BDF8;
+  --color-tertiary-1: #0EA5E9;
+  --color-tertiary-2: #0284C7;
+  --color-tertiary-3: #0369A1;
+  --color-tertiary-4: #075985;
+
+  /* ===== Neutral ===== */
+  --color-neutral: #F8FAFC;
+  --color-neutral-1: #F1F5F9;
+  --color-neutral-2: #E2E8F0;
+  --color-neutral-3: #CBD5E1;
+  --color-neutral-4: #94A3B8;
+  --color-neutral-dark: #64748B;
+
+  /* ===== Alerts ===== */
+  --color-info: #0EA5E9;
+  --color-success: #22C55E;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+
+  /* ===== Backgrounds ===== */
+  --bg-light: #F8FAFC;
+  --bg-medium: #E2E8F0;
+  --bg-dark: #1E293B;
+
+  /* ===== Extras needed by profile ===== */
+  --color-text-muted: #3C4947;
+  --color-error-subtle: rgba(239, 68, 68, 0.08);
+}
+
+
+
+/* ========== BASE STYLES ========== */
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-light);
+  color: var(--color-primary);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* ========== TYPOGRAPHY ========== */
+
+h1 { font-size: 48px; font-weight: 700; line-height: 1.2; color: var(--color-primary); }
+h2 { font-size: 36px; font-weight: 700; line-height: 1.25; color: var(--color-primary); }
+h3 { font-size: 24px; font-weight: 600; line-height: 1.3; color: var(--color-primary); }
+h4 { font-size: 20px; font-weight: 600; line-height: 1.4; color: var(--color-primary); }
+
+.subtitle-1 { font-size: 20px; font-weight: 600; line-height: 1.4; }
+.subtitle-2 { font-size: 18px; font-weight: 600; line-height: 1.4; }
+
+.body-1 { font-size: 16px; font-weight: 400; line-height: 1.6; }
+.body-2 { font-size: 14px; font-weight: 400; line-height: 1.6; }
+
+.label { font-size: 14px; font-weight: 500; line-height: 1.5; }
+.small-text { font-size: 12px; font-weight: 500; line-height: 1.5; }
+
+/* ========== RESPONSIVE TYPOGRAPHY ========== */
+
+@media (max-width: 768px) {
+  h1 { font-size: 32px; line-height: 1.3; }
+  h2 { font-size: 28px; line-height: 1.3; }
+  h3 { font-size: 20px; line-height: 1.35; }
+  h4 { font-size: 18px; line-height: 1.4; }
+
+  .subtitle-1 { font-size: 18px; }
+  .subtitle-2 { font-size: 16px; }
+
+  .body-1 { font-size: 15px; }
+  .body-2 { font-size: 13px; }
+
+  .label { font-size: 13px; }
+  .small-text { font-size: 11px; }
+}
+
+
+/* ========== SNACKBARS ========== */
+
+.mat-mdc-snack-bar-container.success-snackbar .mdc-snackbar__surface {
+  background-color: var(--color-success) !important;
+  color: #fff;
+}
+
+.mat-mdc-snack-bar-container.error-snackbar .mdc-snackbar__surface {
+  background-color: var(--color-error) !important;
+  color: #fff;
+}
+
+.mat-mdc-snack-bar-container.info-snackbar .mdc-snackbar__surface {
+  background-color: var(--color-info) !important;
+  color: #fff;
+}
+
+.mat-mdc-snack-bar-container .mdc-snackbar__surface {
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-weight: 500;
+}
+
+.mdc-notched-outline__leading,
+.mdc-notched-outline__notch,
+.mdc-notched-outline__trailing {
+  border-color: var(--color-neutral-3) !important;
+}
