@@ -1,0 +1,204 @@
+<div class="clinical-layout">
+  <aside class="sidebar">
+    <a class="brand" routerLink="/dashboard"
+      ><mat-icon>pets</mat-icon><span>VetPax<small>CLÍNICA</small></span></a
+    >
+    <nav aria-label="Navegación clínica">
+      <a routerLink="/dashboard"><mat-icon>home</mat-icon>Inicio</a>
+      <span class="disabled"><mat-icon>pets</mat-icon>Pacientes</span>
+      <a class="active" routerLink="/agenda"><mat-icon>calendar_month</mat-icon>Agenda</a>
+      <span class="disabled"><mat-icon>local_hospital</mat-icon>Clínica</span>
+    </nav>
+    <button mat-button type="button" class="logout" (click)="logout()">
+      <mat-icon>logout</mat-icon>Cerrar sesión
+    </button>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Clínica de la agenda</mat-label>
+        <mat-select [value]="selectedClinicId" (selectionChange)="selectClinic($event.value)">
+          @for (clinic of clinics; track clinic.clinicId) {
+            <mat-option [value]="clinic.clinicId">{{ clinic.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </header>
+
+    <section class="page-heading">
+      <div>
+        <span>GESTIÓN DE CITAS</span>
+        <h1>Agenda <small>Semana activa</small></h1>
+        <p>{{ weekStart | date: 'd MMMM' }} — {{ weekEnd | date: 'd MMMM, y' }}</p>
+      </div>
+      <div class="week-actions">
+        <button mat-icon-button type="button" aria-label="Semana anterior" (click)="previousWeek()">
+          <mat-icon>chevron_left</mat-icon>
+        </button>
+        <button mat-stroked-button type="button" (click)="today()">Hoy</button>
+        <button mat-icon-button type="button" aria-label="Semana siguiente" (click)="nextWeek()">
+          <mat-icon>chevron_right</mat-icon>
+        </button>
+      </div>
+    </section>
+
+    <section class="legend">
+      <strong>ESTADO:</strong> <span><i class="pending"></i>Programada</span
+      ><span><i class="attended"></i>Atendida</span>
+      <span><i class="cancelled"></i>Cancelada</span>
+    </section>
+
+    @if (loading) {
+      <div class="state">
+        <mat-spinner diameter="44"></mat-spinner>
+        <p>Cargando agenda…</p>
+      </div>
+    } @else if (errorMessage) {
+      <div class="state error">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ errorMessage }}</p>
+        @if (selectedClinicId) {
+          <button mat-stroked-button (click)="selectClinic(selectedClinicId)">Reintentar</button>
+        }
+      </div>
+    } @else if (!clinics.length) {
+      <div class="state">
+        <mat-icon>event_busy</mat-icon>
+        <p>No hay clínicas disponibles para consultar.</p>
+      </div>
+    } @else {
+      <section class="calendar" aria-label="Agenda semanal">
+        @for (day of weekDays; track day.getTime()) {
+          <article class="day" [class.today]="isToday(day)">
+            <header>
+              <span>{{ day | date: 'EEE' }}</span
+              ><strong>{{ day | date: 'd' }}</strong>
+              @if (isToday(day)) {
+                <small>HOY</small>
+              }
+            </header>
+            <div class="appointments">
+              @for (appointment of appointmentsFor(day); track appointment.appointmentId) {
+                <button
+                  type="button"
+                  class="appointment"
+                  [ngClass]="statusClass(appointment.status)"
+                  (click)="openDetail(appointment.appointmentId)"
+                >
+                  <span class="appointment-time"
+                    >{{ formatTime(appointment.startTime) }} —
+                    {{ formatTime(appointment.endTime) }}</span
+                  >
+                  <strong>{{ appointment.petName || 'Mascota' }}</strong>
+                  <small>{{ appointment.species || 'Especie no registrada' }}</small>
+                  <p>{{ appointment.reason }}</p>
+                  <span class="status-chip">{{ statusLabel(appointment.status) }}</span>
+                </button>
+              } @empty {
+                <p class="empty-day">Sin citas</p>
+              }
+            </div>
+          </article>
+        }
+      </section>
+    }
+  </main>
+
+  @if (detailLoading || selectedAppointment) {
+    <div class="overlay" (click)="closeDetail()">
+      <aside class="detail-panel" (click)="$event.stopPropagation()" aria-label="Detalle de cita">
+        <header>
+          <div>
+            <span>DETALLE DE CITA</span>
+            <h2>{{ selectedAppointment?.petName || 'Cita veterinaria' }}</h2>
+          </div>
+          <button mat-icon-button type="button" (click)="closeDetail()">
+            <mat-icon>close</mat-icon>
+          </button>
+        </header>
+        @if (detailLoading) {
+          <div class="state"><mat-spinner diameter="40"></mat-spinner></div>
+        } @else if (selectedAppointment; as appointment) {
+          <span class="detail-status" [ngClass]="statusClass(appointment.status)">{{
+            statusLabel(appointment.status)
+          }}</span>
+          <dl>
+            <div>
+              <dt><mat-icon>pets</mat-icon>Mascota</dt>
+              <dd>{{ appointment.petId }}</dd>
+            </div>
+            <div>
+              <dt><mat-icon>calendar_today</mat-icon>Fecha</dt>
+              <dd>{{ appointment.date | date: 'fullDate' }}</dd>
+            </div>
+            <div>
+              <dt><mat-icon>schedule</mat-icon>Horario</dt>
+              <dd>
+                {{ formatTime(appointment.startTime) }} — {{ formatTime(appointment.endTime) }}
+              </dd>
+            </div>
+            <div>
+              <dt><mat-icon>medical_services</mat-icon>Motivo</dt>
+              <dd>{{ appointment.reason }}</dd>
+            </div>
+            <div>
+              <dt><mat-icon>person</mat-icon>Veterinario</dt>
+              <dd>{{ appointment.veterinarianId }}</dd>
+            </div>
+          </dl>
+
+          @if (editingSchedule) {
+            <form class="reschedule" [formGroup]="rescheduleForm" (ngSubmit)="saveReschedule()">
+              <h3>Reprogramar cita</h3>
+              <mat-form-field
+                ><mat-label>Nueva fecha</mat-label
+                ><input matInput type="date" formControlName="date"
+              /></mat-form-field>
+              <mat-form-field
+                ><mat-label>Nueva hora</mat-label
+                ><input matInput type="time" formControlName="startTime"
+              /></mat-form-field>
+              <div>
+                <button mat-button type="button" (click)="editingSchedule = false">Volver</button>
+                <button
+                  mat-flat-button
+                  class="primary-action"
+                  type="submit"
+                  [disabled]="rescheduleForm.invalid || saving"
+                >
+                  {{ saving ? 'Guardando…' : 'Confirmar horario' }}
+                </button>
+              </div>
+            </form>
+          } @else if (isPending(appointment.status)) {
+            <div class="detail-actions">
+              <button
+                mat-stroked-button
+                type="button"
+                (click)="cancelAppointment()"
+                [disabled]="saving"
+              >
+                <mat-icon>event_busy</mat-icon>Cancelar cita
+              </button>
+              <button
+                mat-flat-button
+                type="button"
+                class="primary-action"
+                (click)="editingSchedule = true"
+              >
+                <mat-icon>edit_calendar</mat-icon>Reprogramar
+              </button>
+            </div>
+          }
+          @if (!appointment.clinicalAttentionId && isPending(appointment.status)) {
+            <p class="attention-note">
+              <mat-icon>info</mat-icon>La cita podrá marcarse como atendida cuando el flujo clínico
+              genere una atención asociada.
+            </p>
+          }
+        }
+      </aside>
+    </div>
+  }
+</div>
