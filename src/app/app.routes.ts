@@ -4,6 +4,7 @@ import { AuthCallbackComponent } from './auth/auth-callback.component';
 import { SignInComponent } from './public/pages/signin.component/signin.component';
 import { SignUpComponent } from './public/pages/signup.component/signup.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { ClinicComponent } from './clinic-management/clinic.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'sign-in', pathMatch: 'full' },
@@ -11,5 +12,6 @@ export const routes: Routes = [
   { path: 'sign-up', component: SignUpComponent },
   { path: 'auth/callback', component: AuthCallbackComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+  { path: 'clinic', component: ClinicComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: 'sign-in' },
 ];

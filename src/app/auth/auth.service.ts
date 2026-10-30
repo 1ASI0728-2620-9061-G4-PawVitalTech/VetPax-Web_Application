@@ -34,6 +34,23 @@ export class AuthService {
     return Boolean(token && expiresAt > Date.now());
   }
 
+  get accessToken(): string | null {
+    return sessionStorage.getItem(ACCESS_TOKEN_KEY);
+  }
+
+  hasRole(role: string): boolean {
+    const token = this.accessToken;
+    if (!token) return false;
+    try {
+      const payload = JSON.parse(decodeBase64Url(token.split('.')[1])) as {
+        realm_access?: { roles?: string[] };
+      };
+      return payload.realm_access?.roles?.includes(role) ?? false;
+    } catch {
+      return false;
+    }
+  }
+
   /** Starts the secure browser login. The user enters their password in Keycloak. */
   async startLogin(email?: string): Promise<void> {
     const state = randomBase64Url(32);
@@ -110,4 +127,17 @@ function base64Url(bytes: Uint8Array): string {
   let binary = '';
   for (const byte of bytes) binary += String.fromCharCode(byte);
   return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
+function decodeBase64Url(value: string | undefined): string {
+  if (!value) throw new Error('Token payload is missing.');
+  const base64 = value
+    .replace(/-/g, '+')
+    .replace(/_/g, '/')
+    .padEnd(Math.ceil(value.length / 4) * 4, '=');
+  return decodeURIComponent(
+    Array.from(atob(base64), (char) => `%${char.charCodeAt(0).toString(16).padStart(2, '0')}`).join(
+      '',
+    ),
+  );
 }
