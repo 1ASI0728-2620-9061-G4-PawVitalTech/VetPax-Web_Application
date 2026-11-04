@@ -2,7 +2,7 @@
 export const environment = {
   // Served through Angular's development proxy: /api -> https://localhost:7175.
   apiBaseUrl: '/api/v1',
-  keycloakUrl: 'http://localhost:8080',
+  keycloakUrl: 'https://keycloak-production-91a6.up.railway.app',
   keycloakRealm: 'vetpax',
   keycloakClientId: 'vetpax-dev',
 };
