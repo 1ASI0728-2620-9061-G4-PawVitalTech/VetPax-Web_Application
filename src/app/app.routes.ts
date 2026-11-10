@@ -11,5 +11,10 @@ export const routes: Routes = [
   { path: 'sign-up', component: SignUpComponent },
   { path: 'auth/callback', component: AuthCallbackComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+  {
+    path: 'medication',
+    canActivate: [authGuard],
+    loadChildren: () => import('./medication-treatment/medication.routes').then((m) => m.MEDICATION_ROUTES),
+  },
   { path: '**', redirectTo: 'sign-in' },
 ];
