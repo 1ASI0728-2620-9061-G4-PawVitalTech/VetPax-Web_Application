@@ -38,5 +38,197 @@
       "minlength": "Minimum 9 characters",
       "accept-terms": "You must accept the terms"
     }
+  },
+  "care": {
+    "nav": {
+      "label": "Care navigation",
+      "medication": "Medication",
+      "nutrition": "Nutrition",
+      "logout": "Sign out"
+    },
+    "days": {
+      "Monday": "Mon",
+      "Tuesday": "Tue",
+      "Wednesday": "Wed",
+      "Thursday": "Thu",
+      "Friday": "Fri",
+      "Saturday": "Sat",
+      "Sunday": "Sun"
+    },
+    "schedule": {
+      "time": "Time",
+      "days": "Days of the week",
+      "days-required": "Select at least one day",
+      "quantity": "Quantity",
+      "unit": "Unit",
+      "remove": "Remove schedule",
+      "add": "Add schedule"
+    },
+    "common": {
+      "back": "Back",
+      "cancel": "Cancel",
+      "save": "Save changes",
+      "on": "Enabled",
+      "off": "Disabled",
+      "open-ended": "No end date",
+      "end-optional": "Optional: leave empty if open-ended"
+    },
+    "fields": {
+      "timezone": "Time zone"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "picker": {
+      "clinic": "Clinic",
+      "search": "Search patient",
+      "choose-clinic": "Select a clinic to see its patients.",
+      "no-patients": "No patients to show.",
+      "patient": "Patient",
+      "species": "Species / breed",
+      "select": "Select",
+      "last-attention": "Last attention"
+    },
+    "errors": {
+      "required": "This field is required",
+      "guid": "Enter a valid identifier (UUID)",
+      "range": "The end date cannot be before the start date.",
+      "no-clinic": "The clinic is missing. Go back to the list and select a clinic and a patient.",
+      "unknown": "An unexpected error occurred.",
+      "network": "Could not reach the server. Check that the API is running.",
+      "bad-request": "The submitted data is not valid.",
+      "unauthorized": "Your session expired. Please sign in again.",
+      "forbidden": "You are not allowed to do this. Only veterinarians authorized for the clinic and patient can; feeding plans can only be changed by the prescribing veterinarian.",
+      "not-found": "The requested resource was not found.",
+      "conflict": "The operation conflicts with the current state.",
+      "server": "The server could not process the request. Try again."
+    }
+  },
+  "medication": {
+    "title": "Medication",
+    "patients": {
+      "subtitle": "Choose a patient to view or prescribe treatments."
+    },
+    "plans": {
+      "title": "{{pet}}'s treatments",
+      "subtitle": "Medication plans prescribed to the patient.",
+      "new": "New prescription",
+      "empty": "This patient has no medication treatments yet."
+    },
+    "fields": {
+      "route": "Route of administration",
+      "period": "Period",
+      "schedules": "Schedules",
+      "name": "Medication",
+      "instructions": "Instructions",
+      "start": "Start date",
+      "end": "End date",
+      "attention": "Clinical attention (optional)",
+      "amount": "Dose"
+    },
+    "status": {
+      "active": "Active",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "canceled": "Cancelled"
+    },
+    "dose-status": {
+      "pending": "Pending",
+      "administered": "Administered",
+      "cancelled": "Cancelled",
+      "canceled": "Cancelled",
+      "missed": "Missed"
+    },
+    "form": {
+      "title": "Prescribe medication",
+      "subtitle": "Record {{pet}}'s treatment. Data is sent to the VetPax backend.",
+      "drug": "Medication",
+      "route-hint": "e.g. Oral",
+      "attention-hint": "UUID of the related clinical attention",
+      "schedules": "Schedules and doses",
+      "schedules-hint": "Each row generates doses on the given days at the local time.",
+      "submit": "Prescribe",
+      "saved": "Treatment prescribed successfully."
+    },
+    "detail": {
+      "change-schedules": "Change schedules",
+      "complete": "Complete",
+      "cancel": "Cancel treatment",
+      "summary": "Summary",
+      "schedules": "Schedules",
+      "change-hint": "When saved, future doses are rescheduled according to the new schedules.",
+      "no-schedules": "No schedules recorded.",
+      "doses": "Scheduled doses",
+      "doses-hint": "Doses are generated in the background and may take a few minutes to appear after creating or changing the plan. The owner records administration from the mobile app.",
+      "from": "From",
+      "to": "To",
+      "refresh": "Refresh",
+      "no-doses": "There are no doses for this range yet.",
+      "scheduled": "Scheduled",
+      "status": "Status",
+      "administered": "Administered at",
+      "updated": "Treatment updated."
+    },
+    "confirm": {
+      "complete-title": "Complete treatment?",
+      "complete-message": "The treatment will be marked as completed and will no longer accept changes.",
+      "complete-action": "Complete",
+      "cancel-title": "Cancel treatment?",
+      "cancel-message": "Pending doses will be cancelled. This action cannot be undone.",
+      "cancel-action": "Cancel treatment"
+    }
+  },
+  "nutrition": {
+    "title": "Nutrition",
+    "patients": {
+      "subtitle": "Choose a patient to view or prescribe a feeding plan."
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "plan": {
+      "title": "{{pet}}'s feeding plan",
+      "edit": "Edit plan",
+      "deactivate": "Deactivate plan",
+      "new": "Prescribe plan",
+      "no-active": "This patient has no active feeding plan.",
+      "inactive-banner": "This plan is deactivated. It is shown as history only.",
+      "schedules": "Feeding schedule",
+      "no-schedules": "No schedules recorded.",
+      "history": "Revision history",
+      "history-hint": "Each edit creates a new revision; previous ones are kept.",
+      "deactivated": "Feeding plan deactivated.",
+      "replaced-at": "replaced on"
+    },
+    "fields": {
+      "period": "Period",
+      "revision": "Revision",
+      "reminders": "Reminders",
+      "recommendations": "Recommendations",
+      "food": "Food",
+      "start": "Start date",
+      "end": "End date",
+      "quantity": "Quantity"
+    },
+    "form": {
+      "title-new": "Prescribe feeding plan",
+      "title-edit": "Edit feeding plan",
+      "subtitle-new": "Define {{pet}}'s feeding.",
+      "subtitle-edit": "Saving creates a new revision of {{pet}}'s plan.",
+      "food": "Food and recommendations",
+      "schedules": "Meals",
+      "schedules-hint": "Set local time, days and quantity per meal.",
+      "submit-new": "Prescribe plan",
+      "submit-edit": "Save new revision",
+      "saved-new": "Feeding plan prescribed.",
+      "saved-edit": "New revision saved."
+    },
+    "confirm": {
+      "deactivate-title": "Deactivate feeding plan?",
+      "deactivate-message": "The plan will no longer be listed as active. Its history is kept and you can prescribe a new one.",
+      "deactivate-action": "Deactivate"
+    }
   }
 }

@@ -38,5 +38,197 @@
       "minlength": "Mínimo {requiredLength} caracteres",
       "accept-terms": "Debes aceptar los términos"
     }
+  },
+  "care": {
+    "nav": {
+      "label": "Navegación de cuidados",
+      "medication": "Medicación",
+      "nutrition": "Alimentación",
+      "logout": "Salir"
+    },
+    "days": {
+      "Monday": "Lun",
+      "Tuesday": "Mar",
+      "Wednesday": "Mié",
+      "Thursday": "Jue",
+      "Friday": "Vie",
+      "Saturday": "Sáb",
+      "Sunday": "Dom"
+    },
+    "schedule": {
+      "time": "Hora",
+      "days": "Días de la semana",
+      "days-required": "Selecciona al menos un día",
+      "quantity": "Cantidad",
+      "unit": "Unidad",
+      "remove": "Quitar horario",
+      "add": "Agregar horario"
+    },
+    "common": {
+      "back": "Volver",
+      "cancel": "Cancelar",
+      "save": "Guardar cambios",
+      "on": "Activados",
+      "off": "Desactivados",
+      "open-ended": "Sin fecha de fin",
+      "end-optional": "Opcional: déjalo vacío si no tiene fin"
+    },
+    "fields": {
+      "timezone": "Zona horaria"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "picker": {
+      "clinic": "Clínica",
+      "search": "Buscar paciente",
+      "choose-clinic": "Selecciona una clínica para ver sus pacientes.",
+      "no-patients": "No hay pacientes para mostrar.",
+      "patient": "Paciente",
+      "species": "Especie / raza",
+      "select": "Seleccionar",
+      "last-attention": "Última atención"
+    },
+    "errors": {
+      "required": "Este campo es obligatorio",
+      "guid": "Ingresa un identificador válido (UUID)",
+      "range": "La fecha de fin no puede ser anterior a la de inicio.",
+      "no-clinic": "Falta la clínica. Vuelve a la lista y selecciona una clínica y un paciente.",
+      "unknown": "Ocurrió un error inesperado.",
+      "network": "No se pudo conectar con el servidor. Verifica que la API esté en ejecución.",
+      "bad-request": "Los datos enviados no son válidos.",
+      "unauthorized": "Tu sesión expiró. Inicia sesión nuevamente.",
+      "forbidden": "No tienes permiso para esta acción. Solo veterinarios autorizados para la clínica y el paciente pueden hacerlo; en planes alimentarios, solo quien lo prescribió puede modificarlo.",
+      "not-found": "No se encontró el recurso solicitado.",
+      "conflict": "La operación entra en conflicto con el estado actual.",
+      "server": "El servidor no pudo procesar la solicitud. Intenta de nuevo."
+    }
+  },
+  "medication": {
+    "title": "Medicación",
+    "patients": {
+      "subtitle": "Elige un paciente para ver o prescribir sus tratamientos."
+    },
+    "plans": {
+      "title": "Tratamientos de {{pet}}",
+      "subtitle": "Planes de medicación prescritos al paciente.",
+      "new": "Nueva prescripción",
+      "empty": "Este paciente aún no tiene tratamientos de medicación."
+    },
+    "fields": {
+      "route": "Vía de administración",
+      "period": "Periodo",
+      "schedules": "Horarios",
+      "name": "Medicamento",
+      "instructions": "Indicaciones",
+      "start": "Fecha de inicio",
+      "end": "Fecha de fin",
+      "attention": "Atención clínica (opcional)",
+      "amount": "Dosis"
+    },
+    "status": {
+      "active": "Activo",
+      "completed": "Completado",
+      "cancelled": "Cancelado",
+      "canceled": "Cancelado"
+    },
+    "dose-status": {
+      "pending": "Pendiente",
+      "administered": "Administrada",
+      "cancelled": "Cancelada",
+      "canceled": "Cancelada",
+      "missed": "Omitida"
+    },
+    "form": {
+      "title": "Prescribir medicación",
+      "subtitle": "Registra el tratamiento de {{pet}}. Los datos se envían al backend de VetPax.",
+      "drug": "Medicamento",
+      "route-hint": "Ej.: Oral",
+      "attention-hint": "UUID de la atención clínica asociada",
+      "schedules": "Horarios y dosis",
+      "schedules-hint": "Cada fila genera dosis en los días y la hora local indicados.",
+      "submit": "Prescribir",
+      "saved": "Tratamiento prescrito correctamente."
+    },
+    "detail": {
+      "change-schedules": "Cambiar horarios",
+      "complete": "Completar",
+      "cancel": "Cancelar tratamiento",
+      "summary": "Resumen",
+      "schedules": "Horarios",
+      "change-hint": "Al guardar, las dosis futuras se reprograman según los nuevos horarios.",
+      "no-schedules": "Sin horarios registrados.",
+      "doses": "Dosis programadas",
+      "doses-hint": "Las dosis se generan en segundo plano; pueden tardar unos minutos en aparecer tras crear o modificar el plan. El propietario registra la administración desde la app móvil.",
+      "from": "Desde",
+      "to": "Hasta",
+      "refresh": "Actualizar",
+      "no-doses": "Aún no hay dosis para este rango.",
+      "scheduled": "Programada",
+      "status": "Estado",
+      "administered": "Administrada el",
+      "updated": "Tratamiento actualizado."
+    },
+    "confirm": {
+      "complete-title": "¿Completar tratamiento?",
+      "complete-message": "El tratamiento se marcará como completado y no admitirá más cambios.",
+      "complete-action": "Completar",
+      "cancel-title": "¿Cancelar tratamiento?",
+      "cancel-message": "Las dosis pendientes se cancelarán. Esta acción no se puede deshacer.",
+      "cancel-action": "Cancelar tratamiento"
+    }
+  },
+  "nutrition": {
+    "title": "Alimentación",
+    "patients": {
+      "subtitle": "Elige un paciente para ver o prescribir su plan alimentario."
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "plan": {
+      "title": "Plan alimentario de {{pet}}",
+      "edit": "Editar plan",
+      "deactivate": "Desactivar plan",
+      "new": "Prescribir plan",
+      "no-active": "Este paciente no tiene un plan alimentario activo.",
+      "inactive-banner": "Este plan está desactivado. Se muestra solo como historial.",
+      "schedules": "Horarios de alimentación",
+      "no-schedules": "Sin horarios registrados.",
+      "history": "Historial de revisiones",
+      "history-hint": "Cada edición crea una nueva revisión; las anteriores se conservan.",
+      "deactivated": "Plan alimentario desactivado.",
+      "replaced-at": "reemplazada el"
+    },
+    "fields": {
+      "period": "Periodo",
+      "revision": "Revisión",
+      "reminders": "Recordatorios",
+      "recommendations": "Recomendaciones",
+      "food": "Alimento",
+      "start": "Fecha de inicio",
+      "end": "Fecha de fin",
+      "quantity": "Cantidad"
+    },
+    "form": {
+      "title-new": "Prescribir plan alimentario",
+      "title-edit": "Editar plan alimentario",
+      "subtitle-new": "Define la alimentación de {{pet}}.",
+      "subtitle-edit": "Al guardar se crea una nueva revisión del plan de {{pet}}.",
+      "food": "Alimento y recomendaciones",
+      "schedules": "Tomas",
+      "schedules-hint": "Indica hora local, días y cantidad por toma.",
+      "submit-new": "Prescribir plan",
+      "submit-edit": "Guardar nueva revisión",
+      "saved-new": "Plan alimentario prescrito.",
+      "saved-edit": "Nueva revisión guardada."
+    },
+    "confirm": {
+      "deactivate-title": "¿Desactivar plan alimentario?",
+      "deactivate-message": "El plan dejará de figurar como activo. Su historial se conserva y podrás prescribir uno nuevo.",
+      "deactivate-action": "Desactivar"
+    }
   }
 }
