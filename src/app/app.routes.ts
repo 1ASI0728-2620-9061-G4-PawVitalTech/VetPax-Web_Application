@@ -11,5 +11,8 @@ export const routes: Routes = [
   { path: 'sign-up', component: SignUpComponent },
   { path: 'auth/callback', component: AuthCallbackComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+  { path: 'patients', loadComponent: () => import('./pet-clinical-care/patients.component').then(m => m.PatientsComponent), canActivate: [authGuard] },
+  { path: 'patients/:petId', loadComponent: () => import('./pet-clinical-care/patient-detail.component').then(m => m.PatientDetailComponent), canActivate: [authGuard] },
+  { path: 'patients/:petId/attention', loadComponent: () => import('./pet-clinical-care/attention.component').then(m => m.AttentionComponent), canActivate: [authGuard] },
   { path: '**', redirectTo: 'sign-in' },
 ];
