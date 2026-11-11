@@ -1,0 +1,35 @@
+<section class="clinical-page">
+  <nav class="breadcrumbs"><a routerLink="/dashboard">Inicio</a> / <a routerLink="/patients">Pacientes</a> / Detalle</nav>
+  <div class="panel patient-head">
+    <div class="avatar">🐾</div>
+    <div class="head-text"><p class="eyebrow">Expediente clínico</p><h1>{{ name }}</h1>
+      <p>{{ species || 'Especie no informada' }} · {{ breed || 'Raza no informada' }}</p></div>
+    <a class="button" *ngIf="clinicId" [routerLink]="['/patients', petId, 'attention']" [queryParams]="{ clinicId: clinicId, name: name }">+ Registrar atención</a>
+  </div>
+  <div class="tabs" role="tablist" aria-label="Secciones de paciente">
+    <button type="button" (click)="selectTab('summary')" [class.active]="tab === 'summary'">Resumen</button>
+    <button type="button" (click)="selectTab('history')" [class.active]="tab === 'history'">Historial clínico</button>
+    <button type="button" (click)="selectTab('evolution')" [class.active]="tab === 'evolution'">Evolución</button>
+  </div>
+  <div class="panel detail-body" *ngIf="tab === 'summary'">
+    <h2>Información del paciente</h2>
+    <dl class="details"><div><dt>Nombre</dt><dd>{{ name }}</dd></div><div><dt>Especie</dt><dd>{{ species || 'No informada' }}</dd></div>
+      <div><dt>Raza</dt><dd>{{ breed || 'No informada' }}</dd></div><div><dt>Identificador</dt><dd class="identifier">{{ petId }}</dd></div></dl>
+    <p class="muted">Los datos disponibles proceden del listado de pacientes de la clínica. El backend documentado no ofrece un endpoint veterinario para obtener detalles adicionales de una mascota.</p>
+  </div>
+  <div class="panel detail-body" *ngIf="tab === 'history'">
+    <h2>Historial clínico</h2>
+    <p>El contrato del backend documenta <code>GET /pets/{{petId}}/clinical-records</code> para propietarios. No está confirmado para veterinarios.</p>
+    <p class="muted">Para mostrar el historial completo desde Web, el equipo backend debe confirmar o habilitar su consulta para un veterinario autorizado. No se muestran registros ficticios.</p>
+  </div>
+  <div class="panel detail-body" *ngIf="tab === 'evolution'">
+    <h2>Evolución clínica</h2>
+    <p *ngIf="loadingEvolution" role="status">Cargando evolución...</p>
+    <p class="feedback" role="alert" *ngIf="evolutionError">{{ evolutionError }}</p>
+    <ng-container *ngIf="evolution && !loadingEvolution">
+      <p *ngIf="evolution.hasSufficientData === false">Aún no existen suficientes indicadores comparables para mostrar la evolución.</p>
+      <p *ngIf="evolution.hasSufficientData !== false">Información de evolución devuelta por la API:</p>
+      <pre>{{ evolution | json }}</pre>
+    </ng-container>
+  </div>
+</section>
