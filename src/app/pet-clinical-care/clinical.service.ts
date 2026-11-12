@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { environment } from '../../environments/environment';
-import { ClinicalAttentionInput, ClinicalEvolution, ClinicDirectory, Patient } from './clinical.models';
+import { ClinicalAttentionInput, ClinicalEvolution, ClinicDirectory, ClinicPatientsResponse } from './clinical.models';
 
 @Injectable({ providedIn: 'root' })
 export class ClinicalService {
@@ -22,8 +22,8 @@ export class ClinicalService {
     });
   }
 
-  patients(clinicId: string): Observable<Patient[] | { items: Patient[] }> {
-    return this.http.get<Patient[] | { items: Patient[] }>(
+  patients(clinicId: string): Observable<ClinicPatientsResponse> {
+    return this.http.get<ClinicPatientsResponse>(
       `${this.api}/clinics/${encodeURIComponent(clinicId)}/patients`, this.options(),
     );
   }
