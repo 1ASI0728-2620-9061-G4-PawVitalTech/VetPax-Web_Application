@@ -1,4 +1,14 @@
 <section class="clinical-page">
+  <div *ngIf="!isValidPatientId" class="panel detail-body">
+  <h2>Paciente no válido</h2>
+  <p class="feedback info">
+    El identificador del paciente no es válido.
+    Selecciona un paciente desde el listado de una clínica autorizada.
+  </p>
+  <a routerLink="/patients" class="button">Volver a pacientes</a>
+</div>
+
+<ng-container *ngIf="isValidPatientId">
   <nav class="breadcrumbs"><a routerLink="/dashboard">Inicio</a> / <a routerLink="/patients">Pacientes</a> / Detalle</nav>
   <div class="panel patient-head">
     <div class="avatar" aria-hidden="true">🐾</div>
@@ -48,4 +58,5 @@
       </div>
     </ng-container>
   </div>
+  </ng-container>
 </section>

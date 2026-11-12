@@ -27,6 +27,10 @@ export class PatientDetailComponent implements OnInit {
   loadingEvolution = false;
   evolutionError = '';
 
+get isValidPatientId(): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(this.petId);
+}
+
   ngOnInit(): void {
     this.petId = this.route.snapshot.paramMap.get('petId') || '';
     this.clinicId = this.route.snapshot.queryParamMap.get('clinicId') || '';
@@ -35,10 +39,19 @@ export class PatientDetailComponent implements OnInit {
     this.lastAttentionDate = this.route.snapshot.queryParamMap.get('lastAttentionDate') || '';
   }
 
-  selectTab(tab: 'summary' | 'evolution' | 'history'): void {
-    this.tab = tab;
-    if (tab === 'evolution' && this.clinicId && !this.evolution && !this.loadingEvolution) this.loadEvolution();
+selectTab(tab: 'summary' | 'evolution' | 'history'): void {
+  this.tab = tab;
+
+  if (tab === 'evolution') {
+    if (!this.isValidPatientId) {
+      this.evolutionError = 'El identificador del paciente no es válido.';
+    } else if (!this.clinicId) {
+      this.evolutionError = 'Selecciona un paciente desde una clínica autorizada para consultar su evolución.';
+    } else if (!this.evolution && !this.loadingEvolution) {
+      this.loadEvolution();
+    }
   }
+}
 
   loadEvolution(): void {
     if (!this.clinicId) {
