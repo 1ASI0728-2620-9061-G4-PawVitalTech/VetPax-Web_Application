@@ -1,3 +1,4 @@
+
 import { Routes } from '@angular/router';
 import { authGuard } from './auth/auth.guard';
 import { AuthCallbackComponent } from './auth/auth-callback.component';
@@ -12,9 +13,11 @@ export const routes: Routes = [
   { path: 'sign-in', component: SignInComponent },
   { path: 'sign-up', component: SignUpComponent },
   { path: 'auth/callback', component: AuthCallbackComponent },
+
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'agenda', component: AgendaComponent, canActivate: [authGuard] },
   { path: 'clinic', component: ClinicComponent, canActivate: [authGuard] },
+
   {
     path: 'medication',
     canActivate: [authGuard],
@@ -26,7 +29,36 @@ export const routes: Routes = [
   {
     path: 'nutrition',
     canActivate: [authGuard],
-    loadChildren: () => import('./nutrition-management/nutrition.routes').then((m) => m.NUTRITION_ROUTES),
+    loadChildren: () =>
+      import('./nutrition-management/nutrition.routes').then(
+        (m) => m.NUTRITION_ROUTES,
+      ),
   },
+
+  {
+    path: 'patients',
+    loadComponent: () =>
+      import('./pet-clinical-care/patients.component').then(
+        (m) => m.PatientsComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'patients/:petId',
+    loadComponent: () =>
+      import('./pet-clinical-care/patient-detail.component').then(
+        (m) => m.PatientDetailComponent,
+      ),
+    canActivate: [authGuard],
+  },
+  {
+    path: 'patients/:petId/attention',
+    loadComponent: () =>
+      import('./pet-clinical-care/attention.component').then(
+        (m) => m.AttentionComponent,
+      ),
+    canActivate: [authGuard],
+  },
+
   { path: '**', redirectTo: 'sign-in' },
 ];

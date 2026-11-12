@@ -1,0 +1,62 @@
+<section class="clinical-page">
+  <div *ngIf="!isValidPatientId" class="panel detail-body">
+  <h2>Paciente no válido</h2>
+  <p class="feedback info">
+    El identificador del paciente no es válido.
+    Selecciona un paciente desde el listado de una clínica autorizada.
+  </p>
+  <a routerLink="/patients" class="button">Volver a pacientes</a>
+</div>
+
+<ng-container *ngIf="isValidPatientId">
+  <nav class="breadcrumbs"><a routerLink="/dashboard">Inicio</a> / <a routerLink="/patients">Pacientes</a> / Detalle</nav>
+  <div class="panel patient-head">
+    <div class="avatar" aria-hidden="true">🐾</div>
+    <div class="head-text"><p class="eyebrow">Expediente clínico</p><h1>{{ name }}</h1>
+      <p>{{ species || 'Especie no informada' }}</p></div>
+    <a class="button" *ngIf="clinicId" [routerLink]="['/patients', petId, 'attention']" [queryParams]="{ clinicId: clinicId, name: name }">+ Registrar atención</a>
+  </div>
+  <div class="tabs" aria-label="Secciones del paciente">
+    <button type="button" (click)="selectTab('summary')" [class.active]="tab === 'summary'" [attr.aria-pressed]="tab === 'summary'">Resumen</button>
+    <button type="button" (click)="selectTab('history')" [class.active]="tab === 'history'" [attr.aria-pressed]="tab === 'history'">Historial clínico</button>
+    <button type="button" (click)="selectTab('evolution')" [class.active]="tab === 'evolution'" [attr.aria-pressed]="tab === 'evolution'">Evolución</button>
+  </div>
+  <div class="panel detail-body" *ngIf="tab === 'summary'">
+    <h2>Información del paciente</h2>
+    <dl class="details">
+      <div><dt>Nombre</dt><dd>{{ name }}</dd></div>
+      <div><dt>Especie</dt><dd>{{ species || 'No informada' }}</dd></div>
+      <div><dt>Última atención</dt><dd>{{ lastAttentionDate ? (lastAttentionDate | date:'dd/MM/yyyy') : 'Sin registro' }}</dd></div>
+      <div><dt>ID de mascota</dt><dd class="identifier">{{ petId }}</dd></div>
+    </dl>
+    <p class="muted">Información disponible para el veterinario desde la lista de pacientes. Los demás campos requieren un contrato adicional del backend.</p>
+  </div>
+  <div class="panel detail-body" *ngIf="tab === 'history'">
+    <h2>Historial clínico</h2>
+    <p class="feedback info">Pendiente de autorización del backend: el endpoint de historial está documentado para el propietario, no para el veterinario.</p>
+    <p class="muted">No se inventan registros ni se omiten las comprobaciones de permisos. Este apartado se completará cuando exista una consulta autorizada para el rol veterinario.</p>
+  </div>
+  <div class="panel detail-body" *ngIf="tab === 'evolution'">
+    <div class="section-title"><h2>Evolución clínica</h2><button type="button" class="button secondary small" (click)="loadEvolution()" [disabled]="loadingEvolution || !clinicId">Actualizar</button></div>
+    <p *ngIf="loadingEvolution" role="status">Cargando evolución...</p>
+    <p class="feedback" role="alert" *ngIf="evolutionError">{{ evolutionError }}</p>
+    <ng-container *ngIf="evolution && !loadingEvolution">
+      <p class="muted" *ngIf="!evolution.hasSufficientData">Aún no hay suficientes mediciones comparables para interpretar tendencias.</p>
+      <p class="empty" *ngIf="!indicatorGroups.length">Todavía no hay indicadores clínicos registrados.</p>
+      <div class="evolution-grid" *ngIf="indicatorGroups.length">
+        <article class="indicator-card" *ngFor="let group of indicatorGroups">
+          <div class="indicator-heading"><h3>{{ group.label }}</h3><span>{{ group.unit }}</span></div>
+          <p class="muted">{{ group.entries.length }} medición(es) registrada(s)</p>
+          <svg *ngIf="group.entries.length > 1" class="evolution-chart" viewBox="0 0 312 124" role="img" [attr.aria-label]="'Evolución de ' + group.label">
+            <line x1="16" y1="110" x2="300" y2="110" stroke="#cbd5e1"/>
+            <polyline [attr.points]="points(group)" fill="none" stroke="#0d9488" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <table class="indicator-table"><thead><tr><th>Fecha</th><th>Valor</th></tr></thead><tbody>
+            <tr *ngFor="let entry of group.entries"><td>{{ entry.attentionDate | date:'dd/MM/yyyy' }}</td><td>{{ entry.value }} {{ entry.unit }}</td></tr>
+          </tbody></table>
+        </article>
+      </div>
+    </ng-container>
+  </div>
+  </ng-container>
+</section>

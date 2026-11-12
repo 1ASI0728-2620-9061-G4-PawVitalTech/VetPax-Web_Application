@@ -28,6 +28,11 @@ export class AuthService {
     return `${window.location.origin}/auth/callback`;
   }
 
+  /** Access token for authenticated API requests. Never log or persist it in source files. */
+  get accessToken(): string | null {
+    return this.isAuthenticated ? sessionStorage.getItem(ACCESS_TOKEN_KEY) : null;
+  }
+
   get isAuthenticated(): boolean {
     const token = sessionStorage.getItem(ACCESS_TOKEN_KEY);
     const expiresAt = Number(sessionStorage.getItem(EXPIRY_KEY) || '0');
