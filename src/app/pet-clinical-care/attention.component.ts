@@ -71,7 +71,8 @@ export class AttentionComponent implements OnInit {
       diagnosis: raw.diagnosis.trim(),
       treatmentSummary: raw.treatmentSummary.trim(),
       observations: raw.observations.trim(),
-      indicators: raw.indicators.map(i => ({ name: i.name.trim(), value: Number(i.value), unit: i.unit.trim() })),
+      indicators: raw.indicators.map(i => ({name: i['name'].trim(),value: Number(i['value']),unit: i['unit'].trim()
+})),
     }, raw.appointmentId).pipe(finalize(() => this.saving = false)).subscribe({
       next: () => void this.router.navigate(['/patients', this.petId], {
         queryParams: { clinicId: this.clinicId, name: this.name },
