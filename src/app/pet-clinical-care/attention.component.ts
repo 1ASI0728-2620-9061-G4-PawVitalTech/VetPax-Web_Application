@@ -63,6 +63,19 @@ export class AttentionComponent implements OnInit {
     const raw = this.form.getRawValue();
     const date = new Date(raw.attentionDate);
     if (Number.isNaN(date.getTime())) { this.error = 'La fecha de atención no es válida.'; return; }
+    if (![raw.reason, raw.diagnosis, raw.treatmentSummary].every(value => value.trim().length > 0)) {
+      this.error = 'Completa el motivo, diagnóstico y tratamiento sin dejar campos en blanco.';
+      return;
+    }
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (raw.appointmentId.trim() && !uuidPattern.test(raw.appointmentId.trim())) {
+      this.error = 'El ID de cita debe tener el formato UUID correcto.';
+      return;
+    }
+    if (raw.indicators.some(i => !i['name'].trim() || !i['unit'].trim() || !Number.isFinite(Number(i['value'])))) {
+      this.error = 'Revisa el nombre, valor y unidad de cada indicador.';
+      return;
+    }
     this.saving = true;
     this.error = '';
     this.api.registerAttention(this.petId, this.clinicId, {
@@ -71,8 +84,7 @@ export class AttentionComponent implements OnInit {
       diagnosis: raw.diagnosis.trim(),
       treatmentSummary: raw.treatmentSummary.trim(),
       observations: raw.observations.trim(),
-      indicators: raw.indicators.map(i => ({name: i['name'].trim(),value: Number(i['value']),unit: i['unit'].trim()
-})),
+      indicators: raw.indicators.map(i => ({ name: i['name'].trim(), value: Number(i['value']), unit: i['unit'].trim() })),
     }, raw.appointmentId).pipe(finalize(() => this.saving = false)).subscribe({
       next: () => void this.router.navigate(['/patients', this.petId], {
         queryParams: { clinicId: this.clinicId, name: this.name },
