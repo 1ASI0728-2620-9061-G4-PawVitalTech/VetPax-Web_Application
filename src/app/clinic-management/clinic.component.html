@@ -1,0 +1,227 @@
+<div class="clinical-layout">
+  <aside class="sidebar">
+    <a class="brand" routerLink="/dashboard"
+      ><mat-icon>pets</mat-icon><span>VetPax<small>CLÍNICA</small></span></a
+    >
+    <nav aria-label="Navegación clínica">
+      <a routerLink="/dashboard"><mat-icon>home</mat-icon>Inicio</a>
+      <span class="disabled"><mat-icon>pets</mat-icon>Pacientes</span>
+      <span class="disabled"><mat-icon>calendar_month</mat-icon>Agenda</span>
+      <a class="active" routerLink="/clinic"><mat-icon>local_hospital</mat-icon>Clínica</a>
+    </nav>
+    <button mat-button type="button" class="logout" (click)="logout()">
+      <mat-icon>logout</mat-icon>Cerrar sesión
+    </button>
+  </aside>
+
+  <main class="content">
+    <header class="topbar">
+      <mat-form-field appearance="outline" subscriptSizing="dynamic">
+        <mat-label>Clínica activa</mat-label>
+        <mat-select [value]="selectedClinicId" (selectionChange)="selectClinic($event.value)">
+          @for (item of clinics; track item.clinicId) {
+            <mat-option [value]="item.clinicId">{{ item.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+      <span class="portal-status"><i></i> Portal clínico</span>
+    </header>
+
+    <section class="page-heading">
+      <div>
+        <span>CONFIGURACIÓN & FICHA</span>
+        <h1>Clínica</h1>
+        <p>Consulta y gestiona la información general de la clínica veterinaria.</p>
+      </div>
+      @if (clinic && canManage && !editing) {
+        <button mat-flat-button type="button" class="primary-action" (click)="startEditing()">
+          <mat-icon>edit</mat-icon>Editar información
+        </button>
+      }
+    </section>
+
+    @if (loading) {
+      <div class="state">
+        <mat-spinner diameter="44"></mat-spinner>
+        <p>Cargando clínica…</p>
+      </div>
+    } @else if (errorMessage) {
+      <div class="state error">
+        <mat-icon>error_outline</mat-icon>
+        <p>{{ errorMessage }}</p>
+        @if (selectedClinicId) {
+          <button mat-stroked-button (click)="selectClinic(selectedClinicId)">Reintentar</button>
+        }
+      </div>
+    } @else if (!clinic) {
+      <div class="state">
+        <mat-icon>domain_disabled</mat-icon>
+        <p>No hay clínicas disponibles.</p>
+      </div>
+    } @else if (editing) {
+      <form class="edit-card" [formGroup]="profileForm" (ngSubmit)="save()">
+        <div class="section-title">
+          <mat-icon>edit_note</mat-icon>
+          <div>
+            <h2>Editar clínica</h2>
+            <p>Actualiza los datos que admite el backend de VetPax.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <mat-form-field
+            ><mat-label>Nombre</mat-label><input matInput formControlName="name"
+          /></mat-form-field>
+          <mat-form-field
+            ><mat-label>Dirección</mat-label><input matInput formControlName="address"
+          /></mat-form-field>
+          <mat-form-field
+            ><mat-label>Teléfono</mat-label><input matInput formControlName="phone"
+          /></mat-form-field>
+          <mat-form-field
+            ><mat-label>Correo de contacto</mat-label
+            ><input matInput type="email" formControlName="contactEmail"
+          /></mat-form-field>
+        </div>
+        <h3>Horario de atención</h3>
+        <div class="hours-editor" formArrayName="openingHours">
+          @for (group of openingHours.controls; track $index) {
+            <div class="hours-row" [formGroupName]="$index">
+              <mat-form-field
+                ><mat-label>Día</mat-label
+                ><mat-select formControlName="dayOfWeek">
+                  @for (day of days; track $index) {
+                    <mat-option [value]="$index">{{ day }}</mat-option>
+                  }
+                </mat-select></mat-form-field
+              >
+              <mat-form-field
+                ><mat-label>Apertura</mat-label
+                ><input matInput type="time" formControlName="openTime"
+              /></mat-form-field>
+              <mat-form-field
+                ><mat-label>Cierre</mat-label
+                ><input matInput type="time" formControlName="closeTime"
+              /></mat-form-field>
+            </div>
+          }
+        </div>
+        <div class="form-actions">
+          <button mat-button type="button" (click)="cancelEditing()">Cancelar</button>
+          <button
+            mat-flat-button
+            type="submit"
+            class="primary-action"
+            [disabled]="profileForm.invalid || saving"
+          >
+            {{ saving ? 'Guardando…' : 'Guardar cambios' }}
+          </button>
+        </div>
+      </form>
+    } @else {
+      <section class="profile-card">
+        <div class="clinic-title">
+          <span class="clinic-icon"><mat-icon>local_hospital</mat-icon></span>
+          <div>
+            <h2>{{ clinic.name }}</h2>
+            <p>Perfil institucional VetPax</p>
+          </div>
+          <span class="status"><i></i> Activa</span>
+        </div>
+        <div class="detail-grid">
+          <article>
+            <mat-icon>location_on</mat-icon>
+            <div>
+              <label>DIRECCIÓN</label><strong>{{ clinic.address }}</strong>
+            </div>
+          </article>
+          <article>
+            <mat-icon>phone</mat-icon>
+            <div>
+              <label>TELÉFONO DE CONTACTO</label
+              ><strong>{{ clinic.phone || 'No registrado' }}</strong>
+            </div>
+          </article>
+          <article>
+            <mat-icon>mail</mat-icon>
+            <div>
+              <label>CORREO DE CONTACTO</label
+              ><strong>{{ clinic.contactEmail || 'No registrado' }}</strong>
+            </div>
+          </article>
+          <article>
+            <mat-icon>update</mat-icon>
+            <div>
+              <label>ÚLTIMA ACTUALIZACIÓN</label
+              ><strong>{{ clinic.updatedAt | date: 'medium' }}</strong>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <div class="management-grid">
+        <section class="panel">
+          <div class="section-title">
+            <mat-icon>schedule</mat-icon>
+            <div>
+              <h2>Horario de atención</h2>
+              <p>Horario registrado para esta sede.</p>
+            </div>
+          </div>
+          @if (clinic.openingHours.length) {
+            <div class="hours-list">
+              @for (hours of clinic.openingHours; track hours.dayOfWeek) {
+                <div>
+                  <strong>{{ dayName(hours.dayOfWeek) }}</strong
+                  ><span>{{ hours.openTime }} — {{ hours.closeTime }}</span>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="empty">No se registraron horarios de atención.</p>
+          }
+        </section>
+
+        <section class="panel">
+          <div class="section-title">
+            <mat-icon>stethoscope</mat-icon>
+            <div>
+              <h2>Veterinarios</h2>
+              <p>Profesionales vinculados a la clínica.</p>
+            </div>
+          </div>
+          @if (veterinarians.length) {
+            <div class="vet-list">
+              @for (vet of veterinarians; track trackVeterinarian($index, vet)) {
+                <div>
+                  <span class="avatar">V</span>
+                  <div>
+                    <strong>Veterinario</strong><small>{{ vet.veterinarianId }}</small>
+                  </div>
+                  <span class="status compact">Activo</span>
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="empty">No hay veterinarios vinculados.</p>
+          }
+          @if (canManage) {
+            <form class="link-form" [formGroup]="veterinarianForm" (ngSubmit)="linkVeterinarian()">
+              <mat-form-field subscriptSizing="dynamic"
+                ><mat-label>UUID del veterinario</mat-label>
+                <input matInput formControlName="veterinarianId"
+              /></mat-form-field>
+              <button
+                mat-flat-button
+                type="submit"
+                class="primary-action"
+                [disabled]="veterinarianForm.invalid || saving"
+              >
+                <mat-icon>person_add</mat-icon>Vincular
+              </button>
+            </form>
+          }
+        </section>
+      </div>
+    }
+  </main>
+</div>

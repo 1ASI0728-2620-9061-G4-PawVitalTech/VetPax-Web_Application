@@ -1,3 +1,4 @@
+
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Router } from '@angular/router';
@@ -38,12 +39,28 @@ export class AuthService {
     return sessionStorage.getItem(ACCESS_TOKEN_KEY);
   }
 
+  hasRole(role: string): boolean {
+    const token = this.accessToken;
+    if (!token) return false;
+
+    try {
+      const payload = JSON.parse(decodeBase64Url(token.split('.')[1])) as {
+        realm_access?: { roles?: string[] };
+      };
+
+      return payload.realm_access?.roles?.includes(role) ?? false;
+    } catch {
+      return false;
+    }
+  }
+
   /** Starts the secure browser login. The user enters their password in Keycloak. */
   async startLogin(email?: string): Promise<void> {
     const state = randomBase64Url(32);
     const verifier = randomBase64Url(32);
     const hash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(verifier));
     const challenge = base64Url(new Uint8Array(hash));
+
     sessionStorage.setItem(OAUTH_STATE_KEY, state);
     sessionStorage.setItem(OAUTH_VERIFIER_KEY, verifier);
 
@@ -56,7 +73,9 @@ export class AuthService {
       code_challenge: challenge,
       code_challenge_method: 'S256',
     });
+
     if (email) params.set('login_hint', email.trim());
+
     window.location.assign(`${this.realmUrl}/auth?${params.toString()}`);
   }
 
@@ -64,6 +83,7 @@ export class AuthService {
   async completeLogin(code: string, returnedState: string): Promise<void> {
     const expectedState = sessionStorage.getItem(OAUTH_STATE_KEY);
     const verifier = sessionStorage.getItem(OAUTH_VERIFIER_KEY);
+
     sessionStorage.removeItem(OAUTH_STATE_KEY);
     sessionStorage.removeItem(OAUTH_VERIFIER_KEY);
 
@@ -81,17 +101,27 @@ export class AuthService {
     const response = await firstValueFrom(
       this.http.post<KeycloakTokenResponse>(`${this.realmUrl}/token`, body),
     );
+
     if (!response.access_token || response.token_type.toLowerCase() !== 'bearer') {
       throw new Error('Keycloak no devolvió un token de acceso válido.');
     }
 
     sessionStorage.setItem(ACCESS_TOKEN_KEY, response.access_token);
-    sessionStorage.setItem(EXPIRY_KEY, String(Date.now() + response.expires_in * 1000 - 15000));
+    sessionStorage.setItem(
+      EXPIRY_KEY,
+      String(Date.now() + response.expires_in * 1000 - 15000),
+    );
+
     await this.router.navigateByUrl('/dashboard', { replaceUrl: true });
   }
 
   /** Public backend registration endpoint (creates a pet-owner account). */
-  register(payload: { firstName: string; lastName: string; email: string; password: string }): Observable<unknown> {
+  register(payload: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+  }): Observable<unknown> {
     return this.http.post(`${environment.apiBaseUrl}/auth/register`, payload);
   }
 
@@ -114,4 +144,19 @@ function base64Url(bytes: Uint8Array): string {
   let binary = '';
   for (const byte of bytes) binary += String.fromCharCode(byte);
   return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+}
+
+function decodeBase64Url(value: string | undefined): string {
+  if (!value) throw new Error('Token payload is missing.');
+
+  const base64 = value
+    .replace(/-/g, '+')
+    .replace(/_/g, '/')
+    .padEnd(Math.ceil(value.length / 4) * 4, '=');
+
+  return decodeURIComponent(
+    Array.from(atob(base64), (char) =>
+      `%${char.charCodeAt(0).toString(16).padStart(2, '0')}`,
+    ).join(''),
+  );
 }

@@ -5,6 +5,7 @@ import { SignInComponent } from './public/pages/signin.component/signin.componen
 import { SignUpComponent } from './public/pages/signup.component/signup.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AgendaComponent } from './appointment-management/agenda.component';
+import { ClinicComponent } from './clinic-management/clinic.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'sign-in', pathMatch: 'full' },
@@ -13,5 +14,6 @@ export const routes: Routes = [
   { path: 'auth/callback', component: AuthCallbackComponent },
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'agenda', component: AgendaComponent, canActivate: [authGuard] },
+  { path: 'clinic', component: ClinicComponent, canActivate: [authGuard] },
   { path: '**', redirectTo: 'sign-in' },
 ];
