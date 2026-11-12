@@ -1,30 +1,4 @@
-<div class="workspace-shell">
-  <aside class="workspace-sidebar" aria-label="Navegación principal">
-    <div class="brand-area">
-      <div class="brand-logo" aria-hidden="true">🐾</div>
-      <div class="brand-copy"><strong>VetPax</strong><small>{{ isAdministrator ? 'Panel de administración' : 'Panel clínico' }}</small></div>
-      <span class="brand-badge">WEB</span>
-    </div>
-
-    <div class="nav-caption">ESPACIO DE TRABAJO</div>
-    <nav class="workspace-nav" aria-label="Secciones de VetPax">
-      <a class="nav-item active" routerLink="/dashboard" aria-current="page"><span class="nav-icon" aria-hidden="true">⌂</span><span>Inicio</span><span class="active-marker" aria-hidden="true"></span></a>
-      @for (item of visibleLinks; track item.path) {
-        @if (hasRoute(item.path)) {
-          <a class="nav-item" [routerLink]="item.path"><span class="nav-icon" aria-hidden="true">{{ item.icon }}</span><span>{{ item.title }}</span><span class="nav-chevron" aria-hidden="true">›</span></a>
-        } @else {
-          <span class="nav-item unavailable" [attr.title]="item.title + ': pendiente de integración'"><span class="nav-icon" aria-hidden="true">{{ item.icon }}</span><span>{{ item.title }}</span><span class="nav-lock" aria-label="Pendiente de integración">·</span></span>
-        }
-      }
-    </nav>
-
-    <div class="sidebar-foot">
-      <div class="session-card"><span class="session-avatar" aria-hidden="true">{{ isAdministrator ? 'A' : isVeterinarian ? 'V' : 'U' }}</span><span class="session-copy"><strong>{{ roleLabel }}</strong><small><span class="online-dot" aria-hidden="true"></span> Acceso autenticado</small></span></div>
-      <button type="button" class="logout-button" (click)="logout()"><span aria-hidden="true">↪</span> Cerrar sesión</button>
-    </div>
-  </aside>
-
-  <main class="workspace-main" id="main-content">
+<main class="workspace-main" id="main-content">
     <header class="workspace-topbar">
       <div class="topbar-breadcrumb"><span class="topbar-tag">{{ isAdministrator ? 'PANEL ADMINISTRATIVO' : isVeterinarian ? 'PANEL VETERINARIO' : 'PANEL WEB' }}</span><span class="breadcrumb-separator">/</span><strong>Inicio</strong></div>
       <span class="topbar-status"><span class="online-dot" aria-hidden="true"></span> Espacio de trabajo</span>
@@ -109,5 +83,4 @@
       }
       <footer class="workspace-footer"><span>VetPax · Panel Web</span><span>{{ isAdministrator ? 'Gestión de clínica conectada' : 'Atención veterinaria conectada' }}</span></footer>
     </div>
-  </main>
-</div>
+</main>

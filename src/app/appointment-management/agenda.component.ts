@@ -9,8 +9,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { RouterLink } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
 import { AgendaAppointment, AppointmentDetail, ClinicDirectoryItem } from './appointment.models';
 import { AppointmentService } from './appointment.service';
 
@@ -20,7 +18,6 @@ import { AppointmentService } from './appointment.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
@@ -34,7 +31,6 @@ import { AppointmentService } from './appointment.service';
 })
 export class AgendaComponent implements OnInit {
   private readonly appointments = inject(AppointmentService);
-  private readonly auth = inject(AuthService);
   private readonly fb = inject(FormBuilder);
   private readonly snackBar = inject(MatSnackBar);
 
@@ -201,10 +197,6 @@ export class AgendaComponent implements OnInit {
 
   formatTime(value: string): string {
     return value.slice(0, 5);
-  }
-
-  logout(): void {
-    this.auth.logout();
   }
 
   private loadAgenda(showLoader = true): void {

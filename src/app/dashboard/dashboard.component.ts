@@ -1,6 +1,5 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
 
 type WebRole = 'veterinarian' | 'clinic_administrator' | 'owner' | 'unassigned';
 interface DashboardLink {
@@ -42,7 +41,6 @@ function readKeycloakRoles(): string[] {
 })
 export class DashboardComponent {
   private readonly router = inject(Router);
-  private readonly auth = inject(AuthService);
   private readonly realmRoles = readKeycloakRoles();
 
   readonly role: WebRole = this.realmRoles.includes('clinic_administrator')
@@ -81,6 +79,4 @@ export class DashboardComponent {
     const firstSegment = path.replace(/^\//, '').split('/')[0];
     return this.router.config.some(route => route.path === firstSegment);
   }
-
-  logout(): void { this.auth.logout(); }
 }

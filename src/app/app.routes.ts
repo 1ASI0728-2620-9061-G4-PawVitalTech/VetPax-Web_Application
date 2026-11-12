@@ -7,6 +7,7 @@ import { SignUpComponent } from './public/pages/signup.component/signup.componen
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AgendaComponent } from './appointment-management/agenda.component';
 import { ClinicComponent } from './clinic-management/clinic.component';
+import { AuthenticatedLayoutComponent } from './shared/layout/authenticated-layout.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'sign-in', pathMatch: 'full' },
@@ -14,50 +15,40 @@ export const routes: Routes = [
   { path: 'sign-up', component: SignUpComponent },
   { path: 'auth/callback', component: AuthCallbackComponent },
 
-  { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
-  { path: 'agenda', component: AgendaComponent, canActivate: [authGuard] },
-  { path: 'clinic', component: ClinicComponent, canActivate: [authGuard] },
-
   {
-    path: 'medication',
+    path: '',
     canActivate: [authGuard],
-    loadChildren: () =>
-      import('./medication-treatment/medication.routes').then(
-        (m) => m.MEDICATION_ROUTES,
-      ),
-  },
-  {
-    path: 'nutrition',
-    canActivate: [authGuard],
-    loadChildren: () =>
-      import('./nutrition-management/nutrition.routes').then(
-        (m) => m.NUTRITION_ROUTES,
-      ),
-  },
-
-  {
-    path: 'patients',
-    loadComponent: () =>
-      import('./pet-clinical-care/patients.component').then(
-        (m) => m.PatientsComponent,
-      ),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'patients/:petId',
-    loadComponent: () =>
-      import('./pet-clinical-care/patient-detail.component').then(
-        (m) => m.PatientDetailComponent,
-      ),
-    canActivate: [authGuard],
-  },
-  {
-    path: 'patients/:petId/attention',
-    loadComponent: () =>
-      import('./pet-clinical-care/attention.component').then(
-        (m) => m.AttentionComponent,
-      ),
-    canActivate: [authGuard],
+    component: AuthenticatedLayoutComponent,
+    children: [
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'agenda', component: AgendaComponent },
+      { path: 'clinic', component: ClinicComponent },
+      {
+        path: 'medication',
+        loadChildren: () =>
+          import('./medication-treatment/medication.routes').then((m) => m.MEDICATION_ROUTES),
+      },
+      {
+        path: 'nutrition',
+        loadChildren: () =>
+          import('./nutrition-management/nutrition.routes').then((m) => m.NUTRITION_ROUTES),
+      },
+      {
+        path: 'patients',
+        loadComponent: () =>
+          import('./pet-clinical-care/patients.component').then((m) => m.PatientsComponent),
+      },
+      {
+        path: 'patients/:petId',
+        loadComponent: () =>
+          import('./pet-clinical-care/patient-detail.component').then((m) => m.PatientDetailComponent),
+      },
+      {
+        path: 'patients/:petId/attention',
+        loadComponent: () =>
+          import('./pet-clinical-care/attention.component').then((m) => m.AttentionComponent),
+      },
+    ],
   },
 
   { path: '**', redirectTo: 'sign-in' },

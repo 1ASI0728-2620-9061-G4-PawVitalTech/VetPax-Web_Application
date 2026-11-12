@@ -1,0 +1,108 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.app-shell {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 244px minmax(0, 1fr);
+  background: #f3f7fa;
+  transition: grid-template-columns 180ms ease;
+}
+
+.app-shell.sidebar-collapsed {
+  grid-template-columns: 76px minmax(0, 1fr);
+}
+
+.app-sidebar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  height: 100vh;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 27px 16px 18px;
+  background: #fff;
+  border-right: 1px solid #e8eef3;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  padding: 0 7px 30px;
+  border-bottom: 1px solid #f0f3f6;
+  color: #142f42;
+  text-decoration: none;
+}
+
+.brand-logo {
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: #ddf8f1;
+  font-size: 23px;
+}
+
+.brand-copy,
+.session-copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.brand-copy strong { font-size: 21px; letter-spacing: -.04em; }
+.brand-copy small { color: #698092; font-size: 10px; }
+.brand-badge { margin-left: auto; padding: 5px 6px; border-radius: 6px; background: #ebfaf7; color: #138d81; font-size: 9px; font-weight: 800; }
+.nav-caption { margin: 26px 14px 12px; color: #a1adba; font-size: 10px; font-weight: 800; letter-spacing: .1em; white-space: nowrap; }
+.app-nav { display: flex; flex-direction: column; gap: 6px; }
+.nav-item { min-height: 45px; display: flex; align-items: center; gap: 12px; padding: 11px 13px; border-radius: 11px; color: #4a6073; text-decoration: none; font-size: 13px; font-weight: 650; white-space: nowrap; transition: background 160ms, color 160ms; }
+.nav-icon { width: 24px; flex: 0 0 24px; display: inline-flex; justify-content: center; font-size: 17px; }
+.nav-item.active { background: #12b5a5; color: #fff; box-shadow: 0 7px 15px #12b5a523; }
+.sidebar-foot { margin-top: auto; padding-top: 18px; border-top: 1px solid #eaf0f4; }
+.session-card { display: flex; align-items: center; gap: 10px; padding: 11px; border: 1px solid #e8eff5; border-radius: 13px; background: #f4f8fb; white-space: nowrap; }
+.session-avatar { width: 36px; height: 36px; flex: 0 0 36px; display: grid; place-items: center; border-radius: 10px; background: #d8f8f0; color: #0a8678; font-size: 15px; font-weight: 850; }
+.session-copy { gap: 5px; }
+.session-copy strong { font-size: 12px; }
+.session-copy small { color: #698092; font-size: 10px; }
+.logout-button { display: flex; align-items: center; gap: 9px; padding: 16px 12px 3px; border: 0; background: transparent; color: #b64954; font-size: 12px; font-weight: 750; cursor: pointer; white-space: nowrap; }
+.app-content { min-width: 0; }
+.sidebar-toggle { position: fixed; z-index: 30; top: 22px; left: 226px; width: 34px; height: 34px; border: 1px solid #dce7ed; border-radius: 50%; background: #fff; color: #0b867d; box-shadow: 0 5px 14px #1931491f; font-size: 24px; line-height: 1; cursor: pointer; transition: left 180ms ease; }
+
+.sidebar-collapsed .sidebar-toggle { left: 59px; }
+.sidebar-collapsed .brand-copy,
+.sidebar-collapsed .brand-badge,
+.sidebar-collapsed .nav-caption,
+.sidebar-collapsed .nav-label,
+.sidebar-collapsed .session-copy { display: none; }
+.sidebar-collapsed .brand { justify-content: center; padding-inline: 0; }
+.sidebar-collapsed .nav-item,
+.sidebar-collapsed .logout-button { justify-content: center; padding-inline: 0; }
+.sidebar-collapsed .session-card { justify-content: center; padding-inline: 0; border-color: transparent; background: transparent; }
+
+@media (max-width: 760px) {
+  .app-shell,
+  .app-shell.sidebar-collapsed { grid-template-columns: minmax(0, 1fr); }
+  .app-sidebar { position: fixed; left: 0; width: 244px; box-shadow: 12px 0 30px #1931491f; transition: transform 180ms ease; }
+  .sidebar-collapsed .app-sidebar { transform: translateX(-100%); }
+  .sidebar-toggle { left: 226px; }
+  .sidebar-collapsed .sidebar-toggle { left: 12px; }
+  .sidebar-collapsed .brand-copy,
+  .sidebar-collapsed .brand-badge,
+  .sidebar-collapsed .nav-caption,
+  .sidebar-collapsed .nav-label,
+  .sidebar-collapsed .session-copy { display: initial; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-shell,
+  .app-sidebar,
+  .sidebar-toggle { transition: none; }
+}

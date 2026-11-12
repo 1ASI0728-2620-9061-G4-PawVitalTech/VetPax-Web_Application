@@ -1,20 +1,4 @@
-<div class="clinical-layout">
-  <aside class="sidebar">
-    <a class="brand" routerLink="/dashboard"
-      ><mat-icon>pets</mat-icon><span>VetPax<small>CLÍNICA</small></span></a
-    >
-    <nav aria-label="Navegación clínica">
-      <a routerLink="/dashboard"><mat-icon>home</mat-icon>Inicio</a>
-      <span class="disabled"><mat-icon>pets</mat-icon>Pacientes</span>
-      <a class="active" routerLink="/agenda"><mat-icon>calendar_month</mat-icon>Agenda</a>
-      <span class="disabled"><mat-icon>local_hospital</mat-icon>Clínica</span>
-    </nav>
-    <button mat-button type="button" class="logout" (click)="logout()">
-      <mat-icon>logout</mat-icon>Cerrar sesión
-    </button>
-  </aside>
-
-  <main class="content">
+<main class="content">
     <header class="topbar">
       <mat-form-field appearance="outline" subscriptSizing="dynamic">
         <mat-label>Clínica de la agenda</mat-label>
@@ -201,4 +185,3 @@
       </aside>
     </div>
   }
-</div>

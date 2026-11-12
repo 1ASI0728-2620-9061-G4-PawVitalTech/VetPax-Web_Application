@@ -16,7 +16,6 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { RouterLink } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import {
@@ -40,7 +39,6 @@ type OpeningHoursForm = FormGroup<{
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    RouterLink,
     MatButtonModule,
     MatFormFieldModule,
     MatIconModule,
@@ -195,10 +193,6 @@ export class ClinicComponent implements OnInit {
 
   trackVeterinarian(_: number, veterinarian: ClinicVeterinarian): string {
     return veterinarian.veterinarianId;
-  }
-
-  logout(): void {
-    this.auth.logout();
   }
 
   private refreshVeterinarians(): void {
