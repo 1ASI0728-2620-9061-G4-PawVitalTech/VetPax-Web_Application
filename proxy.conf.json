@@ -1,7 +1,7 @@
 {
   "/api": {
-    "target": "https://vetpax-api-production.up.railway.app",
-    "secure": true,
+    "target": "https://vetpax-api-production.up.railway.app/swagger",
+    "secure": false,
     "changeOrigin": true
   }
 }
