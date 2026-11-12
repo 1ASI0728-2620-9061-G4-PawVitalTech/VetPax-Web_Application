@@ -1,0 +1,76 @@
+<div class="dashboard-layout">
+  <aside class="dashboard-sidebar" aria-label="Navegación principal">
+    <div class="sidebar-brand"><span class="brand-paw" aria-hidden="true">🐾</span><strong>VetPax</strong><span class="brand-tag">Web</span></div>
+    <nav class="sidebar-nav" aria-label="Secciones de VetPax">
+      <a class="nav-link active" routerLink="/dashboard" aria-current="page"><span aria-hidden="true">⌂</span> Inicio</a>
+      @for (item of links; track item.path) {
+        @if (hasRoute(item.path)) {
+          <a class="nav-link" [routerLink]="item.path"><span aria-hidden="true">{{ item.icon }}</span> {{ item.title }}</a>
+        } @else {
+          <span class="nav-link unavailable" [attr.title]="item.title + ': pendiente de integración'"><span aria-hidden="true">{{ item.icon }}</span> {{ item.title }} <small>Pendiente</small></span>
+        }
+      }
+    </nav>
+    <div class="sidebar-bottom"><span class="session-dot" aria-hidden="true"></span> Sesión iniciada <button type="button" (click)="logout()">Cerrar sesión</button></div>
+  </aside>
+
+  <main class="dashboard-main" id="main-content">
+    <header class="dashboard-topbar">
+      <div><span class="eyebrow">PANEL WEB</span><span class="topbar-subtitle">Espacio de trabajo veterinario</span></div>
+      <span class="environment-note">VetPax · Módulos integrados</span>
+    </header>
+
+    <section class="welcome-card" aria-labelledby="welcome-title">
+      <div>
+        <span class="eyebrow">BIENVENIDO A VETPAX</span>
+        <h1 id="welcome-title">Tu espacio de trabajo clínico</h1>
+        <p>Accede a pacientes, citas y seguimiento clínico desde un solo lugar. Las secciones se habilitan conforme se integren las ramas del equipo.</p>
+        <div class="welcome-actions">
+          @if (hasRoute('/patients')) { <a routerLink="/patients" class="primary-action">Ver pacientes</a> }
+          @if (hasRoute('/agenda')) { <a routerLink="/agenda" class="secondary-action">Ir a la agenda</a> }
+        </div>
+      </div>
+      <div class="welcome-art" aria-hidden="true">🐾</div>
+    </section>
+
+    <section class="dashboard-section" aria-labelledby="clinical-title">
+      <div class="section-heading">
+        <div><span class="eyebrow">ACCESOS PRINCIPALES</span><h2 id="clinical-title">Atención veterinaria</h2></div>
+        <p>Accesos a los módulos clínicos del equipo.</p>
+      </div>
+      <div class="dashboard-grid">
+        @for (item of clinicalLinks; track item.path) {
+          <article class="module-card">
+            <span class="module-icon" aria-hidden="true">{{ item.icon }}</span>
+            <h3>{{ item.title }}</h3>
+            <p>{{ item.description }}</p>
+            @if (hasRoute(item.path)) {
+              <a [routerLink]="item.path" class="module-link">Abrir módulo <span aria-hidden="true">→</span></a>
+            } @else {
+              <span class="module-pending">Pendiente de integración</span>
+            }
+          </article>
+        }
+      </div>
+    </section>
+
+    <section class="dashboard-section" aria-labelledby="management-title">
+      <div class="section-heading"><div><span class="eyebrow">ADMINISTRACIÓN</span><h2 id="management-title">Gestión de clínica</h2></div></div>
+      <div class="dashboard-grid dashboard-grid-narrow">
+        @for (item of managementLinks; track item.path) {
+          <article class="module-card">
+            <span class="module-icon" aria-hidden="true">{{ item.icon }}</span>
+            <h3>{{ item.title }}</h3><p>{{ item.description }}</p>
+            @if (hasRoute(item.path)) {
+              <a [routerLink]="item.path" class="module-link">Abrir módulo <span aria-hidden="true">→</span></a>
+            } @else {
+              <span class="module-pending">Pendiente de integración</span>
+            }
+          </article>
+        }
+      </div>
+    </section>
+
+    <p class="dashboard-footer">Los indicadores de citas y pacientes del diseño Figma se incorporarán cuando exista un contrato de datos validado. No se muestran cifras ficticias.</p>
+  </main>
+</div>
