@@ -39,10 +39,6 @@ export class AuthService {
     return Boolean(token && expiresAt > Date.now());
   }
 
-  get accessToken(): string | null {
-    return sessionStorage.getItem(ACCESS_TOKEN_KEY);
-  }
-
   hasRole(role: string): boolean {
     const token = this.accessToken;
     if (!token) return false;
