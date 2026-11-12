@@ -1,36 +1,33 @@
 <section class="clinical-page">
   <nav class="breadcrumbs"><a routerLink="/dashboard">Inicio</a> / Pacientes</nav>
-  <header class="page-header">
-    <div><p class="eyebrow">VetPax · Atención clínica</p><h1>Pacientes</h1>
-      <p>Consulta las mascotas vinculadas a una clínica autorizada.</p></div>
-  </header>
+  <header class="page-header"><div><p class="eyebrow">VetPax · Atención clínica</p>
+    <h1>Pacientes</h1><p>Consulta los pacientes asociados a una clínica autorizada.</p></div></header>
   <div class="panel toolbar">
     <label>Clínica
-      <select [(ngModel)]="selectedClinic" (ngModelChange)="loadPatients()" [disabled]="!clinics.length">
-        <option value="" disabled>Selecciona una clínica</option>
+      <select [(ngModel)]="selectedClinic" (ngModelChange)="loadPatients()" [disabled]="loadingClinics || !clinics.length">
+        <option value="" disabled>{{ loadingClinics ? 'Cargando clínicas...' : 'Selecciona una clínica' }}</option>
         <option *ngFor="let clinic of clinics" [value]="clinicId(clinic)">{{ clinic.name || clinicId(clinic) }}</option>
       </select>
     </label>
-    <label>Buscar paciente
-      <input type="search" [(ngModel)]="search" placeholder="Nombre, especie o raza" />
-    </label>
+    <label>Buscar paciente<input type="search" [(ngModel)]="search" placeholder="Nombre o especie" /></label>
     <button type="button" class="button secondary" (click)="loadPatients()" [disabled]="loading || !selectedClinic">Actualizar</button>
   </div>
   <p class="feedback" role="alert" *ngIf="clinicError">{{ clinicError }}</p>
+  <p class="feedback" role="status" *ngIf="loadingClinics">Cargando clínicas...</p>
+  <p class="feedback info" role="status" *ngIf="!loadingClinics && !clinicError && !clinics.length">No hay clínicas registradas en este entorno. El listado de pacientes estará disponible cuando exista una clínica autorizada.</p>
   <p class="feedback" role="status" *ngIf="loading">Cargando pacientes...</p>
   <p class="feedback" role="alert" *ngIf="error">{{ error }}</p>
   <div class="panel list-panel" *ngIf="!loading && !error">
     <div class="list-header"><strong>Pacientes registrados</strong><span>{{ filtered.length }} resultado(s)</span></div>
     <div class="table-wrap" *ngIf="filtered.length; else empty">
-      <table><thead><tr><th>Mascota</th><th>Especie</th><th>Raza</th><th>Propietario</th><th></th></tr></thead>
+      <table><thead><tr><th>Nombre</th><th>Especie</th><th>Última atención</th><th>Acciones</th></tr></thead>
         <tbody><tr *ngFor="let patient of filtered">
           <td><strong>{{ patient.name || 'Sin nombre' }}</strong></td>
-          <td>{{ patient.species || 'No informado' }}</td>
-          <td>{{ patient.breed || 'No informada' }}</td>
-          <td>{{ patient.ownerName || 'No disponible' }}</td>
-          <td><a *ngIf="patientId(patient)" class="button small" [routerLink]="['/patients', patientId(patient)]" [queryParams]="{ clinicId: selectedClinic, name: patient.name, species: patient.species, breed: patient.breed }">Ver paciente</a></td>
+          <td>{{ patient.species || 'No informada' }}</td>
+          <td>{{ patient.lastAttentionDate ? (patient.lastAttentionDate | date:'dd/MM/yyyy') : 'Sin atenciones' }}</td>
+          <td><a *ngIf="patientId(patient)" class="button small" [routerLink]="['/patients', patientId(patient)]" [queryParams]="{ clinicId: selectedClinic, name: patient.name, species: patient.species, lastAttentionDate: patient.lastAttentionDate }">Ver paciente</a></td>
         </tr></tbody></table>
     </div>
-    <ng-template #empty><p class="empty">No hay pacientes para mostrar. Verifica tu asignación a la clínica o cambia el filtro.</p></ng-template>
+    <ng-template #empty><p class="empty">{{ !selectedClinic ? 'Selecciona una clínica para consultar sus pacientes.' : (patients.length ? 'Ningún paciente coincide con la búsqueda.' : 'Esta clínica no tiene pacientes vinculados.') }}</p></ng-template>
   </div>
 </section>
