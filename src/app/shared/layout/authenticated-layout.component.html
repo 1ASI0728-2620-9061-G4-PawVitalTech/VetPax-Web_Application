@@ -15,7 +15,7 @@
         [routerLinkActiveOptions]="{ exact: true }"
         title="Inicio"
       >
-        <span class="nav-icon" aria-hidden="true">⌂</span><span class="nav-label">Inicio</span>
+        <mat-icon class="nav-icon" aria-hidden="true">home</mat-icon><span class="nav-label">Inicio</span>
       </a>
       @for (item of visibleNavigation; track item.path) {
         <a class="nav-item" [routerLink]="item.path" routerLinkActive="active" [title]="item.label">

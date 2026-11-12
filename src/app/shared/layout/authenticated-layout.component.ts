@@ -1,4 +1,5 @@
 import { Component, signal, inject } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
 
@@ -12,7 +13,7 @@ interface NavigationItem {
 @Component({
   selector: 'app-authenticated-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, MatIconModule],
   templateUrl: './authenticated-layout.component.html',
   styleUrl: './authenticated-layout.component.css',
 })

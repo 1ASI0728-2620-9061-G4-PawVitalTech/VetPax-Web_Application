@@ -44,6 +44,16 @@
   /* ===== Extras needed by profile ===== */
   --color-text-muted: #3C4947;
   --color-error-subtle: rgba(239, 68, 68, 0.08);
+
+  /* ===== Authenticated workspace ===== */
+  --workspace-background: #F3F7FA;
+  --workspace-surface: #FFFFFF;
+  --workspace-text: #193149;
+  --workspace-muted: #64748B;
+  --workspace-accent: #14B8A6;
+  --workspace-border: #E5EDF3;
+  --workspace-content-max: 1240px;
+  --workspace-gutter: clamp(20px, 2.5vw, 32px);
 }
 
 

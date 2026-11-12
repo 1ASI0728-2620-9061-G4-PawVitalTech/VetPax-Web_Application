@@ -31,7 +31,7 @@ import { LanguageSwitcherComponent } from '../../language-switcher/language-swit
     <main class="care-main"><router-outlet /></main>
   `,
   styles: [`
-    .care-topbar{display:flex;align-items:center;gap:16px;padding:10px 24px;background:#fff;border-bottom:1px solid var(--color-neutral-2);position:sticky;top:0;z-index:10}
+    .care-topbar{min-height:76px;display:flex;align-items:center;gap:16px;padding:10px var(--workspace-gutter);background:var(--workspace-surface);border-bottom:1px solid var(--workspace-border);position:sticky;top:0;z-index:10}
     .care-brand{display:flex;align-items:center;gap:6px;font-weight:700;font-size:20px;color:var(--color-primary);text-decoration:none}
     .care-brand mat-icon{color:var(--color-secondary)}
     .care-nav{display:flex;gap:6px;margin-left:16px}
@@ -39,13 +39,13 @@ import { LanguageSwitcherComponent } from '../../language-switcher/language-swit
     .care-nav a:hover{background:var(--color-neutral-1)}
     .care-nav a.active{background:var(--color-secondary);color:#fff}
     .care-spacer{flex:1}
-    .care-main{max-width:1180px;margin:0 auto;padding:24px}
+    .care-main{max-width:var(--workspace-content-max);margin:0 auto;padding:28px var(--workspace-gutter) 48px}
     .care-page-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:20px}
-    .care-page-head h2{font-size:28px;margin:4px 0}
+    .care-page-head h2{font-size:30px;margin:4px 0}
     .care-crumbs{font-size:13px;color:var(--color-neutral-dark)}
     .care-crumbs a{color:var(--color-secondary-2);text-decoration:none}
     .care-sub{margin:0;color:var(--color-neutral-dark);font-size:14px}
-    .care-card{background:#fff;border:1px solid var(--color-neutral-2);border-radius:16px;padding:20px;margin-bottom:16px}
+    .care-card{background:var(--workspace-surface);border:1px solid var(--workspace-border);border-radius:16px;padding:20px;margin-bottom:16px}
     .care-card h3{font-size:18px;margin:0 0 4px;display:flex;align-items:center;gap:8px}
     .care-card h3 mat-icon{color:var(--color-secondary)}
     .care-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:12px}
@@ -69,7 +69,7 @@ import { LanguageSwitcherComponent } from '../../language-switcher/language-swit
     table.care-table{width:100%}
     .care-table th{font-size:12px;color:var(--color-neutral-dark)}
     .care-hint{font-size:12px;color:var(--color-neutral-dark);margin:4px 0 12px}
-    @media (max-width:760px){.care-schedule{grid-template-columns:1fr 1fr}.care-main{padding:16px}.care-nav{display:none}}
+    @media (max-width:760px){.care-schedule{grid-template-columns:1fr 1fr}.care-main{padding:20px 16px 48px}.care-page-head h2{font-size:25px}.care-nav{display:none}}
   `],
 })
 export class CareShellComponent {
