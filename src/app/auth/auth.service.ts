@@ -34,6 +34,10 @@ export class AuthService {
     return Boolean(token && expiresAt > Date.now());
   }
 
+  get accessToken(): string | null {
+    return sessionStorage.getItem(ACCESS_TOKEN_KEY);
+  }
+
   /** Starts the secure browser login. The user enters their password in Keycloak. */
   async startLogin(email?: string): Promise<void> {
     const state = randomBase64Url(32);
