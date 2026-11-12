@@ -15,5 +15,13 @@ export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
   { path: 'agenda', component: AgendaComponent, canActivate: [authGuard] },
   { path: 'clinic', component: ClinicComponent, canActivate: [authGuard] },
+  {
+    path: 'medication',
+    canActivate: [authGuard],
+    loadChildren: () =>
+      import('./medication-treatment/medication.routes').then(
+        (m) => m.MEDICATION_ROUTES,
+      ),
+  },
   { path: '**', redirectTo: 'sign-in' },
 ];
