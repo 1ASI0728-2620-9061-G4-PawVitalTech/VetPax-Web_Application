@@ -1,6 +1,6 @@
 {
   "/api": {
-    "target": "https://localhost:7175",
+    "target": "https://vetpax-api-production.up.railway.app",
     "secure": false,
     "changeOrigin": true
   }
