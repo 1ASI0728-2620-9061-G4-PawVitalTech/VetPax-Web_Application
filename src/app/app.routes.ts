@@ -23,5 +23,10 @@ export const routes: Routes = [
         (m) => m.MEDICATION_ROUTES,
       ),
   },
+  {
+    path: 'nutrition',
+    canActivate: [authGuard],
+    loadChildren: () => import('./nutrition-management/nutrition.routes').then((m) => m.NUTRITION_ROUTES),
+  },
   { path: '**', redirectTo: 'sign-in' },
 ];
