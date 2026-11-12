@@ -64,19 +64,16 @@ export class AuthService {
     sessionStorage.setItem(OAUTH_STATE_KEY, state);
     sessionStorage.setItem(OAUTH_VERIFIER_KEY, verifier);
 
-    const params = new URLSearchParams({
-      client_id: environment.keycloakClientId,
-      redirect_uri: this.redirectUri,
-      response_type: 'code',
-      scope: 'openid profile email',
-      state,
-      code_challenge: challenge,
-      code_challenge_method: 'S256',
-    });
-
-    if (email) params.set('login_hint', email.trim());
-
-    window.location.assign(`${this.realmUrl}/auth?${params.toString()}`);
+    window.location.assign(
+      buildKeycloakAuthorizationUrl(
+        this.realmUrl,
+        environment.keycloakClientId,
+        this.redirectUri,
+        state,
+        challenge,
+        email,
+      ),
+    );
   }
 
   /** Exchanges an authorization code for a real Keycloak access token. */
@@ -132,6 +129,28 @@ export class AuthService {
     sessionStorage.removeItem(OAUTH_VERIFIER_KEY);
     void this.router.navigateByUrl('/sign-in');
   }
+}
+
+export function buildKeycloakAuthorizationUrl(
+  realmUrl: string,
+  clientId: string,
+  redirectUri: string,
+  state: string,
+  challenge: string,
+  email?: string,
+): string {
+  const params = new URLSearchParams({
+    client_id: clientId,
+    redirect_uri: redirectUri,
+    response_type: 'code',
+    scope: 'openid profile email',
+    state,
+    code_challenge: challenge,
+    code_challenge_method: 'S256',
+    prompt: 'login',
+  });
+  if (email) params.set('login_hint', email.trim());
+  return `${realmUrl}/auth?${params.toString()}`;
 }
 
 function randomBase64Url(length: number): string {
