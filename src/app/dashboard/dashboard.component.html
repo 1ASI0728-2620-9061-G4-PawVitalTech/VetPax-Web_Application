@@ -1,0 +1,86 @@
+<main class="workspace-main" id="main-content">
+    <header class="workspace-topbar">
+      <div class="topbar-breadcrumb"><span class="topbar-tag">{{ isAdministrator ? 'PANEL ADMINISTRATIVO' : isVeterinarian ? 'PANEL VETERINARIO' : 'PANEL WEB' }}</span><span class="breadcrumb-separator">/</span><strong>Inicio</strong></div>
+      <span class="topbar-status"><span class="online-dot" aria-hidden="true"></span> Espacio de trabajo</span>
+    </header>
+
+    <div class="content-area">
+      @if (!isVeterinarian && !isAdministrator) {
+        <section class="intro-strip" role="status">
+          <div class="intro-icon" aria-hidden="true">ⓘ</div>
+          <div class="intro-copy"><strong>Sin módulos Web asignados</strong>
+            <p>Esta aplicación está destinada a veterinarios y administradores de clínica. El propietario utiliza VetPax Mobile. Si tu rol debería tener acceso, consulta al administrador de Keycloak.</p>
+          </div>
+        </section>
+      } @else {
+      <section class="hero-panel" aria-labelledby="hero-heading">
+        <div class="hero-copy">
+          <span class="hero-kicker"><span aria-hidden="true">✦</span> BIENVENIDO A VETPAX</span>
+          <h1 id="hero-heading">{{ greeting }}<span class="hero-period">.</span></h1>
+          <p>{{ isAdministrator ? 'Administra la información, horarios y profesionales de tu clínica desde un mismo espacio.' : 'Organiza tu atención veterinaria y accede a las herramientas de tu equipo desde un espacio claro y conectado.' }}</p>
+          <div class="hero-actions">
+            @if (isVeterinarian && hasRoute('/patients')) {
+              <a class="hero-primary" routerLink="/patients">Explorar pacientes <span aria-hidden="true">↗</span></a>
+            } @else if (isVeterinarian) {
+              <span class="hero-primary muted-action" title="Disponible cuando se integre el módulo de pacientes">Pacientes próximamente</span>
+            }
+            @if (isAdministrator && hasRoute('/clinic')) { <a class="hero-primary" routerLink="/clinic">Gestionar clínica <span aria-hidden="true">↗</span></a> }
+            @if (isAdministrator && !hasRoute('/clinic')) { <span class="hero-primary muted-action">Clínica próximamente</span> }
+            @if (isVeterinarian && hasRoute('/agenda')) { <a class="hero-secondary" routerLink="/agenda">Ver agenda <span aria-hidden="true">→</span></a> }
+          </div>
+        </div>
+        <div class="hero-visual" aria-hidden="true">
+          <div class="hero-orbit orbit-one"></div><div class="hero-orbit orbit-two"></div>
+          <div class="hero-visual-card"><span class="hero-heart">♥</span><span class="hero-paw">🐾</span><span class="hero-visual-line"></span><span class="hero-visual-line short"></span></div>
+          <span class="hero-deco deco-a">✦</span><span class="hero-deco deco-b">✦</span>
+        </div>
+      </section>
+
+      <section class="intro-strip" aria-label="Estado de los módulos">
+        <div class="intro-icon" aria-hidden="true">✳</div>
+        <div class="intro-copy"><strong>Un espacio preparado para trabajar en equipo</strong><p>Los accesos se habilitan automáticamente cuando los módulos estén integrados en esta rama.</p></div>
+        <span class="intro-pill">Integración progresiva</span>
+      </section>
+
+      @if (isVeterinarian) {
+      <section class="module-section" aria-labelledby="clinical-modules">
+        <div class="section-heading">
+          <div><span class="section-eyebrow">MÓDULOS PRINCIPALES</span><h2 id="clinical-modules">Atención veterinaria</h2><p>Elige la herramienta que necesitas para continuar.</p></div>
+          <span class="section-count">04 módulos</span>
+        </div>
+        <div class="module-grid">
+          @for (item of clinicalLinks; track item.path; let idx = $index) {
+            <article class="module-tile" [class.module-tile-disabled]="!hasRoute(item.path)">
+              <div class="tile-top"><span class="tile-symbol" [class.sym-blue]="idx === 1" [class.sym-rose]="idx === 2" [class.sym-amber]="idx === 3" aria-hidden="true">{{ item.icon }}</span><span class="tile-index">0{{ idx + 1 }}</span></div>
+              <h3>{{ item.title }}</h3><p>{{ item.description }}</p>
+              <div class="tile-bottom">
+                @if (hasRoute(item.path)) {<a class="tile-action" [routerLink]="item.path">Abrir módulo <span aria-hidden="true">↗</span></a>}
+                @else {<span class="tile-pending"><span aria-hidden="true">◌</span> Pendiente de integración</span>}
+              </div>
+            </article>
+          }
+        </div>
+      </section>
+
+      }
+      @if (isAdministrator) {
+      <section class="module-section management-section" aria-labelledby="management-modules">
+        <div class="section-heading"><div><span class="section-eyebrow">ORGANIZACIÓN</span><h2 id="management-modules">Administración</h2><p>Configuración y gestión de la clínica.</p></div></div>
+        <div class="management-grid">
+          @for (item of managementLinks; track item.path) {
+            <article class="management-card" [class.module-tile-disabled]="!hasRoute(item.path)">
+              <div class="management-icon" aria-hidden="true">{{ item.icon }}</div>
+              <div class="management-copy"><h3>{{ item.title }}</h3><p>{{ item.description }}</p>
+                @if (hasRoute(item.path)) {<a class="management-link" [routerLink]="item.path">Ir a clínica <span aria-hidden="true">↗</span></a>}
+                @else {<span class="tile-pending">Pendiente de integración</span>}
+              </div>
+            </article>
+          }
+          <div class="context-card"><span class="context-icon" aria-hidden="true">✧</span><div><strong>Gestión responsable de tu clínica</strong><p>Los datos y métricas aparecerán aquí cuando el backend proporcione contratos verificados. No mostramos información simulada.</p></div></div>
+        </div>
+      </section>
+      }
+      }
+      <footer class="workspace-footer"><span>VetPax · Panel Web</span><span>{{ isAdministrator ? 'Gestión de clínica conectada' : 'Atención veterinaria conectada' }}</span></footer>
+    </div>
+</main>

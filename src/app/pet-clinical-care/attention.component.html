@@ -1,0 +1,26 @@
+<section class="clinical-page">
+  <nav class="breadcrumbs"><a routerLink="/dashboard">Inicio</a> / <a routerLink="/patients">Pacientes</a> / Registrar atención</nav>
+  <header class="page-header"><div><p class="eyebrow">Atención veterinaria · {{ name }}</p><h1>Registrar atención clínica</h1>
+    <p>Completa la información médica del paciente. Usa únicamente datos de una atención real y autorizada.</p></div></header>
+  <form class="panel clinical-form" [formGroup]="form" (ngSubmit)="submit()">
+    <div class="form-grid">
+      <label>Fecha y hora de atención <span>*</span><input type="datetime-local" formControlName="attentionDate" required /></label>
+      <label>ID de cita (opcional)<input formControlName="appointmentId" placeholder="UUID si existe cita asociada" /></label>
+    </div>
+    <label>Motivo de consulta <span>*</span><textarea formControlName="reason" rows="2" placeholder="Motivo de la atención" required></textarea></label>
+    <label>Diagnóstico <span>*</span><textarea formControlName="diagnosis" rows="3" required></textarea></label>
+    <label>Resumen del tratamiento <span>*</span><textarea formControlName="treatmentSummary" rows="3" required></textarea></label>
+    <label>Observaciones<textarea formControlName="observations" rows="3"></textarea></label>
+    <div class="section-title"><h2>Indicadores clínicos</h2><button type="button" class="button secondary small" (click)="addIndicator()">+ Agregar indicador</button></div>
+    <div class="indicator-row" *ngFor="let indicator of indicators.controls; let i = index" [formGroup]="$any(indicator)">
+      <label>Indicador<input formControlName="name" placeholder="Ej. Peso" /></label>
+      <label>Valor<input type="number" step="any" formControlName="value" /></label>
+      <label>Unidad<input formControlName="unit" placeholder="Ej. kg" /></label>
+      <button type="button" class="button danger small" (click)="removeIndicator(i)" [attr.aria-label]="'Quitar indicador ' + (i + 1)">Quitar</button>
+    </div>
+    <p class="muted" *ngIf="!indicators.length">No se han añadido indicadores.</p>
+    <p class="feedback" role="alert" *ngIf="error">{{ error }}</p>
+    <footer class="form-actions"><a class="button secondary" [routerLink]="['/patients', petId]" [queryParams]="{clinicId: clinicId, name: name}">Cancelar</a>
+      <button class="button" type="submit" [disabled]="saving || form.invalid || !clinicId">{{ saving ? 'Guardando...' : 'Guardar atención' }}</button></footer>
+  </form>
+</section>

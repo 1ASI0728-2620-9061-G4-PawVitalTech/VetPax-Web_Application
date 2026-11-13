@@ -1,0 +1,54 @@
+<div class="app-shell" [class.sidebar-collapsed]="collapsed()">
+  <aside id="app-sidebar" class="app-sidebar" aria-label="Navegación principal">
+    <a class="brand" routerLink="/dashboard" aria-label="VetPax, ir al inicio">
+      <span class="brand-logo" aria-hidden="true">🐾</span>
+      <span class="brand-copy"><strong>VetPax</strong><small>Panel Web</small></span>
+      <span class="brand-badge">WEB</span>
+    </a>
+
+    <div class="nav-caption">ESPACIO DE TRABAJO</div>
+    <nav class="app-nav" aria-label="Secciones de VetPax">
+      <a
+        class="nav-item"
+        routerLink="/dashboard"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        title="Inicio"
+      >
+        <mat-icon class="nav-icon" aria-hidden="true">home</mat-icon><span class="nav-label">Inicio</span>
+      </a>
+      @for (item of visibleNavigation; track item.path) {
+        <a class="nav-item" [routerLink]="item.path" routerLinkActive="active" [title]="item.label">
+          <span class="nav-icon" aria-hidden="true">{{ item.icon }}</span>
+          <span class="nav-label">{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-foot">
+      <div class="session-card">
+        <span class="session-avatar" aria-hidden="true">{{ roleInitial }}</span>
+        <span class="session-copy"><strong>{{ roleLabel }}</strong><small>Acceso autenticado</small></span>
+      </div>
+      <button type="button" class="logout-button" (click)="logout()" title="Cerrar sesión">
+        <span aria-hidden="true">↪</span><span class="nav-label">Cerrar sesión</span>
+      </button>
+    </div>
+  </aside>
+
+  <button
+    type="button"
+    class="sidebar-toggle"
+    (click)="toggleSidebar()"
+    [attr.aria-expanded]="!collapsed()"
+    aria-controls="app-sidebar"
+    [attr.aria-label]="collapsed() ? 'Mostrar barra lateral' : 'Apartar barra lateral'"
+    [title]="collapsed() ? 'Mostrar barra lateral' : 'Apartar barra lateral'"
+  >
+    <span aria-hidden="true">{{ collapsed() ? '›' : '‹' }}</span>
+  </button>
+
+  <main class="app-content">
+    <router-outlet />
+  </main>
+</div>
