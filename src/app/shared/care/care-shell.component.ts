@@ -21,6 +21,8 @@ import { LanguageSwitcherComponent } from '../../language-switcher/language-swit
     <header class="care-topbar">
       <a class="care-brand" routerLink="/dashboard"><mat-icon>pets</mat-icon><span>VetPax</span></a>
       <nav class="care-nav" [attr.aria-label]="'care.nav.label' | translate">
+        <a routerLink="/patients" routerLinkActive="active"><mat-icon>pets</mat-icon>{{ 'care.nav.patients' | translate }}</a>
+        <a routerLink="/agenda" routerLinkActive="active"><mat-icon>calendar_month</mat-icon>{{ 'care.nav.agenda' | translate }}</a>
         <a routerLink="/medication" routerLinkActive="active"><mat-icon>medication</mat-icon>{{ 'care.nav.medication' | translate }}</a>
         <a routerLink="/nutrition" routerLinkActive="active"><mat-icon>restaurant</mat-icon>{{ 'care.nav.nutrition' | translate }}</a>
       </nav>
