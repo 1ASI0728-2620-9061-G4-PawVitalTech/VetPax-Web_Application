@@ -32,9 +32,25 @@
     <p class="muted">Información disponible para el veterinario.</p>
   </div>
   <div class="panel detail-body" *ngIf="tab === 'history'">
-    <h2>Historial clínico</h2>
-    <p class="feedback info">Informacion no permitida.</p>
-    <p class="muted">No esta autorizado para ver este contenido.</p>
+    <div class="section-title"><h2>Historial clínico</h2><button type="button" class="button secondary small" (click)="loadHistory()" [disabled]="loadingHistory || !clinicId">Actualizar</button></div>
+    <p *ngIf="loadingHistory" role="status">Cargando historial...</p>
+    <p class="feedback" role="alert" *ngIf="historyError">{{ historyError }}</p>
+    <ng-container *ngIf="history && !loadingHistory">
+      <p class="muted" *ngIf="history.message">{{ history.message }}</p>
+      <p class="empty" *ngIf="!history.attentions.length">Todavía no hay atenciones registradas para este paciente.</p>
+      <article class="record-card" *ngFor="let a of history.attentions">
+        <header class="record-head"><strong>{{ a.attentionDate | date:'dd/MM/yyyy HH:mm' }}</strong></header>
+        <dl class="details">
+          <div><dt>Motivo</dt><dd>{{ a.reason }}</dd></div>
+          <div><dt>Diagnóstico</dt><dd>{{ a.diagnosis }}</dd></div>
+          <div><dt>Tratamiento</dt><dd>{{ a.treatmentSummary }}</dd></div>
+          <div *ngIf="a.observations"><dt>Observaciones</dt><dd>{{ a.observations }}</dd></div>
+        </dl>
+        <ul class="record-indicators" *ngIf="a.indicators.length">
+          <li *ngFor="let i of a.indicators">{{ i.name }}: {{ i.value }} {{ i.unit }}</li>
+        </ul>
+      </article>
+    </ng-container>
   </div>
   <div class="panel detail-body" *ngIf="tab === 'evolution'">
     <div class="section-title"><h2>Evolución clínica</h2><button type="button" class="button secondary small" (click)="loadEvolution()" [disabled]="loadingEvolution || !clinicId">Actualizar</button></div>
