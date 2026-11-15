@@ -5,8 +5,7 @@ import { CareDirectoryService } from '../shared/care/care-directory.service';
 import { ClinicService } from '../clinic-management/clinic.service';
 import { PatientSummary } from '../shared/care/care.models';
 import { ClinicVeterinarian } from '../clinic-management/clinic.models';
-import { Router, RouterLink } from '@angular/router';
-
+import { Router, RouterLink, Routes } from '@angular/router';
 type WebRole = 'veterinarian' | 'clinic_administrator' | 'owner' | 'unassigned';
 interface DashboardLink {
   title: string;
@@ -141,10 +140,8 @@ export class DashboardComponent implements OnInit {
   // A route's presence is not permission to use it: we filter by role first.
   hasRoute(path: string): boolean {
     const firstSegment = path.replace(/^\//, '').split('/')[0];
-    return this.router.config.some(
-      (route) =>
-        route.path === firstSegment ||
-        route.children?.some((child) => child.path === firstSegment),
-    );
-    }
+    const find = (routes: Routes): boolean =>
+      routes.some((route) => route.path === firstSegment || (route.children ? find(route.children) : false));
+    return find(this.router.config);
+  }
 }

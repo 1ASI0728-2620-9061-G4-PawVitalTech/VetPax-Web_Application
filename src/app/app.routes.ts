@@ -1,4 +1,3 @@
-
 import { Routes } from '@angular/router';
 import { authGuard } from './auth/auth.guard';
 import { AuthCallbackComponent } from './auth/auth-callback.component';
@@ -8,6 +7,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AgendaComponent } from './appointment-management/agenda.component';
 import { ClinicComponent } from './clinic-management/clinic.component';
 import { AuthenticatedLayoutComponent } from './shared/layout/authenticated-layout.component';
+import { CareShellComponent } from './shared/care/care-shell.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'sign-in', pathMatch: 'full' },
@@ -21,7 +21,6 @@ export const routes: Routes = [
     component: AuthenticatedLayoutComponent,
     children: [
       { path: 'dashboard', component: DashboardComponent },
-      { path: 'agenda', component: AgendaComponent },
       { path: 'clinic', component: ClinicComponent },
       {
         path: 'medication',
@@ -34,19 +33,26 @@ export const routes: Routes = [
           import('./nutrition-management/nutrition.routes').then((m) => m.NUTRITION_ROUTES),
       },
       {
-        path: 'patients',
-        loadComponent: () =>
-          import('./pet-clinical-care/patients.component').then((m) => m.PatientsComponent),
-      },
-      {
-        path: 'patients/:petId',
-        loadComponent: () =>
-          import('./pet-clinical-care/patient-detail.component').then((m) => m.PatientDetailComponent),
-      },
-      {
-        path: 'patients/:petId/attention',
-        loadComponent: () =>
-          import('./pet-clinical-care/attention.component').then((m) => m.AttentionComponent),
+        path: '',
+        component: CareShellComponent,
+        children: [
+          { path: 'agenda', component: AgendaComponent },
+          {
+            path: 'patients',
+            loadComponent: () =>
+              import('./pet-clinical-care/patients.component').then((m) => m.PatientsComponent),
+          },
+          {
+            path: 'patients/:petId',
+            loadComponent: () =>
+              import('./pet-clinical-care/patient-detail.component').then((m) => m.PatientDetailComponent),
+          },
+          {
+            path: 'patients/:petId/attention',
+            loadComponent: () =>
+              import('./pet-clinical-care/attention.component').then((m) => m.AttentionComponent),
+          },
+        ],
       },
     ],
   },
