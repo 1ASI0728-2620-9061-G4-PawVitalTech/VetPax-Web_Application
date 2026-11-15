@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ClinicalService } from './clinical.service';
-import { ClinicalEvolution, EvolutionEntry } from './clinical.models';
+import { ClinicalEvolution, ClinicalRecordHistory, EvolutionEntry } from './clinical.models';
 
 interface IndicatorGroup { label: string; unit: string; entries: EvolutionEntry[]; }
 
@@ -24,7 +24,9 @@ export class PatientDetailComponent implements OnInit {
   tab: 'summary' | 'evolution' | 'history' = 'summary';
   evolution?: ClinicalEvolution;
   indicatorGroups: IndicatorGroup[] = [];
-  loadingEvolution = false;
+  history?: ClinicalRecordHistory;
+  loadingHistory = false;
+  historyError = '';  loadingEvolution = false;
   evolutionError = '';
 
 get isValidPatientId(): boolean {
@@ -41,6 +43,9 @@ get isValidPatientId(): boolean {
 
 selectTab(tab: 'summary' | 'evolution' | 'history'): void {
   this.tab = tab;
+  if (tab === 'history' && !this.history && !this.loadingHistory) {
+    this.loadHistory();
+  }
 
   if (tab === 'evolution') {
     if (!this.isValidPatientId) {
@@ -52,6 +57,30 @@ selectTab(tab: 'summary' | 'evolution' | 'history'): void {
     }
   }
 }
+  loadHistory(): void {
+    if (!this.isValidPatientId || !this.clinicId) {
+      this.historyError = 'Abre este paciente desde una clínica autorizada para consultar su historial.';
+      return;
+    }
+    this.loadingHistory = true;
+    this.historyError = '';
+    this.api.clinicalRecords(this.petId, this.clinicId).subscribe({
+      next: data => {
+        const attentions = [...(data.attentions || [])].sort(
+          (a, b) => new Date(b.attentionDate).getTime() - new Date(a.attentionDate).getTime(),
+        );
+        this.history = { ...data, attentions };
+        this.loadingHistory = false;
+      },
+      error: (err: {status?: number}) => {
+        this.loadingHistory = false;
+        this.historyError = err.status === 403
+          ? 'No tienes autorización para consultar el historial de esta mascota.'
+          : err.status === 404 ? 'No se encontró el historial de este paciente.'
+          : 'No se pudo consultar el historial clínico.';
+      },
+    });
+  }
 
   loadEvolution(): void {
     if (!this.clinicId) {
