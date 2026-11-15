@@ -42,6 +42,8 @@
   "care": {
     "nav": {
       "label": "Navegación de cuidados",
+      "patients": "Pacientes",
+      "agenda": "Agenda",
       "medication": "Medicación",
       "nutrition": "Alimentación",
       "logout": "Salir"

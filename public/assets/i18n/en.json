@@ -41,7 +41,9 @@
   },
   "care": {
     "nav": {
-      "label": "Care navigation",
+"label": "Care navigation",
+      "patients": "Patients",
+      "agenda": "Agenda",
       "medication": "Medication",
       "nutrition": "Nutrition",
       "logout": "Sign out"
