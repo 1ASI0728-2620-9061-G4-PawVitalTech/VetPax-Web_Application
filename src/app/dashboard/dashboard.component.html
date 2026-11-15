@@ -9,7 +9,7 @@
         <section class="intro-strip" role="status">
           <div class="intro-icon" aria-hidden="true">ⓘ</div>
           <div class="intro-copy"><strong>Sin módulos Web asignados</strong>
-            <p>Esta aplicación está destinada a veterinarios y administradores de clínica. El propietario utiliza VetPax Mobile. Si tu rol debería tener acceso, consulta al administrador de Keycloak.</p>
+            <p>Este panel web es para veterinarios y administradores de clínica. Como propietario, consulta a tus mascotas desde la aplicación VetPax Mobile.</p>
           </div>
         </section>
       } @else {
@@ -36,10 +36,22 @@
         </div>
       </section>
 
+      <section class="stats-row" aria-label="Resumen">
+        @if (statsLoading) {
+          <p class="stats-note">Cargando resumen…</p>
+        } @else if (statsError) {
+          <p class="stats-note stats-error">{{ statsError }}</p>
+        } @else {
+          @for (s of stats; track s.label) {
+            <div class="stat-card"><strong>{{ s.value }}</strong><span>{{ s.label }}</span></div>
+          }
+        }
+      </section>
+
       <section class="intro-strip" aria-label="Estado de los módulos">
         <div class="intro-icon" aria-hidden="true">✳</div>
-        <div class="intro-copy"><strong>Un espacio preparado para trabajar en equipo</strong><p>Los accesos se habilitan automáticamente cuando los módulos estén integrados en esta rama.</p></div>
-        <span class="intro-pill">Integración progresiva</span>
+        <div class="intro-copy"><strong>Todo listo para tu jornada</strong><p>Accede a las herramientas de atención veterinaria desde un solo lugar.</p></div>
+        <span class="intro-pill">Módulos activos</span>
       </section>
 
       @if (isVeterinarian) {
@@ -76,7 +88,7 @@
               </div>
             </article>
           }
-          <div class="context-card"><span class="context-icon" aria-hidden="true">✧</span><div><strong>Gestión responsable de tu clínica</strong><p>Los datos y métricas aparecerán aquí cuando el backend proporcione contratos verificados. No mostramos información simulada.</p></div></div>
+          <div class="context-card"><span class="context-icon" aria-hidden="true">✧</span><div><strong>Gestión responsable de tu clínica</strong><p>Administra el perfil, los horarios y los veterinarios asignados desde el módulo Clínica.</p></div></div>
         </div>
       </section>
       }
