@@ -57,6 +57,25 @@ export interface ClinicalEvolution {
   entries: EvolutionEntry[];
   message?: string | null;
 }
+export interface ClinicalRecordAttention {
+  attentionId: string;
+  clinicId: string;
+  veterinarianId: string;
+  attentionDate: string;
+  reason: string;
+  diagnosis: string;
+  treatmentSummary: string;
+  observations: string;
+  indicators: ClinicalIndicator[];
+}
+
+export interface ClinicalRecordHistory {
+  petId: string;
+  clinicalRecordId: string | null;
+  lastUpdatedAt: string | null;
+  message: string | null;
+  attentions: ClinicalRecordAttention[];
+}
 
 export const patientId = (patient: Patient): string => patient.petId;
 export const clinicId = (clinic: ClinicItem): string => clinic.clinicId || clinic.id || '';

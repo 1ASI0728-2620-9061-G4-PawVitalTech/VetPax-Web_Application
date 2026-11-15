@@ -3,8 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { environment } from '../../environments/environment';
-import { ClinicalAttentionInput, ClinicalEvolution, ClinicDirectory, ClinicPatientsResponse } from './clinical.models';
-
+import { ClinicalAttentionInput, ClinicalEvolution, ClinicalRecordHistory, ClinicDirectory, ClinicPatientsResponse } from './clinical.models';
 @Injectable({ providedIn: 'root' })
 export class ClinicalService {
   private readonly http = inject(HttpClient);
@@ -31,6 +30,13 @@ export class ClinicalService {
   evolution(petId: string, clinicId: string): Observable<ClinicalEvolution> {
     return this.http.get<ClinicalEvolution>(
       `${this.api}/pets/${encodeURIComponent(petId)}/evolution`, {
+        ...this.options(), params: new HttpParams().set('clinicId', clinicId),
+      },
+    );
+  }
+  clinicalRecords(petId: string, clinicId: string): Observable<ClinicalRecordHistory> {
+    return this.http.get<ClinicalRecordHistory>(
+      `${this.api}/pets/${encodeURIComponent(petId)}/clinical-records/veterinarian`, {
         ...this.options(), params: new HttpParams().set('clinicId', clinicId),
       },
     );
