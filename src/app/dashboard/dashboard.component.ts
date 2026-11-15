@@ -1,4 +1,10 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { finalize, forkJoin, map, of, switchMap } from 'rxjs';
+import { CareDirectoryService } from '../shared/care/care-directory.service';
+import { ClinicService } from '../clinic-management/clinic.service';
+import { PatientSummary } from '../shared/care/care.models';
+import { ClinicVeterinarian } from '../clinic-management/clinic.models';
 import { Router, RouterLink } from '@angular/router';
 
 type WebRole = 'veterinarian' | 'clinic_administrator' | 'owner' | 'unassigned';
@@ -39,9 +45,14 @@ function readKeycloakRoles(): string[] {
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   private readonly router = inject(Router);
-  private readonly realmRoles = readKeycloakRoles();
+  private readonly directory = inject(CareDirectoryService);
+  private readonly clinicService = inject(ClinicService);
+
+  stats: { label: string; value: number }[] = [];
+  statsLoading = false;
+  statsError = '';  private readonly realmRoles = readKeycloakRoles();
 
   readonly role: WebRole = this.realmRoles.includes('clinic_administrator')
     ? 'clinic_administrator'
@@ -58,7 +69,60 @@ export class DashboardComponent {
     { title: 'Nutrición', description: 'Consultar y gestionar planes alimentarios.', path: '/nutrition', icon: '🥣', group: 'clinical', roles: ['veterinarian'] },
     { title: 'Clínica', description: 'Administrar perfil, horarios y asignaciones de veterinarios.', path: '/clinic', icon: '🏥', group: 'management', roles: ['clinic_administrator'] },
   ];
+  ngOnInit(): void {
+    this.loadStats();
+  }
 
+  private loadStats(): void {
+    if (!this.isVeterinarian && !this.isAdministrator) return;
+    this.statsLoading = true;
+    this.statsError = '';
+
+    this.directory
+      .listClinics()
+      .pipe(
+        switchMap((clinics) => {
+          if (!clinics.length) {
+            return of({
+              clinics,
+              patients: [] as PatientSummary[],
+              vets: [] as ClinicVeterinarian[],
+            });
+          }
+          const clinicId = clinics[0].clinicId;
+          return forkJoin({
+            patients: this.isVeterinarian
+              ? this.directory.listPatients(clinicId)
+              : of([] as PatientSummary[]),
+            vets: this.isAdministrator
+              ? this.clinicService.veterinarians(clinicId)
+              : of([] as ClinicVeterinarian[]),
+          }).pipe(map((r) => ({ clinics, ...r })));
+        }),
+        finalize(() => (this.statsLoading = false)),
+      )
+      .subscribe({
+        next: ({ clinics, patients, vets }) => {
+          this.stats = this.isAdministrator
+            ? [
+                { label: 'Clínicas', value: clinics.length },
+                { label: 'Veterinarios asignados', value: vets.length },
+              ]
+            : [
+                { label: 'Clínicas disponibles', value: clinics.length },
+                { label: 'Pacientes en la clínica', value: patients.length },
+              ];
+        },
+        error: (e: HttpErrorResponse) => {
+          this.statsError =
+            e.status === 401
+              ? 'La sesión expiró. Inicia sesión nuevamente.'
+              : e.status === 403
+                ? 'Tu usuario no tiene una clínica asignada.'
+                : 'No se pudo conectar con la API.';
+        },
+      });
+  }
   get visibleLinks(): DashboardLink[] { return this.links.filter(link => link.roles.includes(this.role)); }
   get clinicalLinks(): DashboardLink[] { return this.visibleLinks.filter(link => link.group === 'clinical'); }
   get managementLinks(): DashboardLink[] { return this.visibleLinks.filter(link => link.group === 'management'); }
@@ -77,6 +141,10 @@ export class DashboardComponent {
   // A route's presence is not permission to use it: we filter by role first.
   hasRoute(path: string): boolean {
     const firstSegment = path.replace(/^\//, '').split('/')[0];
-    return this.router.config.some(route => route.path === firstSegment);
-  }
+    return this.router.config.some(
+      (route) =>
+        route.path === firstSegment ||
+        route.children?.some((child) => child.path === firstSegment),
+    );
+    }
 }
