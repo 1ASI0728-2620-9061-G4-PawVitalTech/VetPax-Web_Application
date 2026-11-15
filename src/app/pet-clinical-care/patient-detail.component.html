@@ -29,12 +29,12 @@
       <div><dt>Última atención</dt><dd>{{ lastAttentionDate ? (lastAttentionDate | date:'dd/MM/yyyy') : 'Sin registro' }}</dd></div>
       <div><dt>ID de mascota</dt><dd class="identifier">{{ petId }}</dd></div>
     </dl>
-    <p class="muted">Información disponible para el veterinario desde la lista de pacientes. Los demás campos requieren un contrato adicional del backend.</p>
+    <p class="muted">Información disponible para el veterinario.</p>
   </div>
   <div class="panel detail-body" *ngIf="tab === 'history'">
     <h2>Historial clínico</h2>
-    <p class="feedback info">Pendiente de autorización del backend: el endpoint de historial está documentado para el propietario, no para el veterinario.</p>
-    <p class="muted">No se inventan registros ni se omiten las comprobaciones de permisos. Este apartado se completará cuando exista una consulta autorizada para el rol veterinario.</p>
+    <p class="feedback info">Informacion no permitida.</p>
+    <p class="muted">No esta autorizado para ver este contenido.</p>
   </div>
   <div class="panel detail-body" *ngIf="tab === 'evolution'">
     <div class="section-title"><h2>Evolución clínica</h2><button type="button" class="button secondary small" (click)="loadEvolution()" [disabled]="loadingEvolution || !clinicId">Actualizar</button></div>
