@@ -28,7 +28,7 @@
     <div class="sidebar-foot">
       <div class="session-card">
         <span class="session-avatar" aria-hidden="true">{{ roleInitial }}</span>
-        <span class="session-copy"><strong>{{ roleLabel }}</strong><small>Acceso autenticado</small></span>
+        <span class="session-copy"><strong>{{ userName || roleLabel }}</strong><small>{{ roleLabel }}</small></span>
       </div>
       <button type="button" class="logout-button" (click)="logout()" title="Cerrar sesión">
         <span aria-hidden="true">↪</span><span class="nav-label">Cerrar sesión</span>
@@ -49,6 +49,17 @@
   </button>
 
   <main class="app-content">
+    <header class="app-topbar">
+      @if (clinicName()) {
+        <span class="clinic-chip"><i aria-hidden="true"></i>{{ clinicName() }}</span>
+      }
+      @if (canSearch) {
+        <div class="topbar-search">
+          <mat-icon aria-hidden="true">search</mat-icon>
+          <input #q type="search" placeholder="Buscar paciente por nombre…" aria-label="Buscar paciente" (keydown.enter)="search(q.value)" />
+        </div>
+      }
+    </header>
     <router-outlet />
   </main>
 </div>

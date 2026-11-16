@@ -110,3 +110,12 @@
   .app-sidebar,
   .sidebar-toggle { transition: none; }
 }
+
+.app-topbar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 16px; min-height: 64px; padding: 12px var(--workspace-gutter) 12px 56px; background: rgba(243, 247, 250, .92); backdrop-filter: blur(6px); border-bottom: 1px solid var(--workspace-border); }
+.clinic-chip { display: inline-flex; align-items: center; gap: 8px; padding: 7px 12px; border-radius: 999px; background: #fff; border: 1px solid var(--workspace-border); color: #35566b; font-size: 12px; font-weight: 650; white-space: nowrap; }
+.clinic-chip i { width: 8px; height: 8px; border-radius: 50%; background: #14b8a6; }
+.topbar-search { margin-left: auto; display: flex; align-items: center; gap: 8px; width: min(360px, 100%); padding: 0 12px; border-radius: 12px; background: #fff; border: 1px solid var(--workspace-border); color: #64748b; }
+.topbar-search mat-icon { font-size: 19px; width: 19px; height: 19px; }
+.topbar-search input { flex: 1; min-width: 0; border: 0; outline: 0; padding: 11px 0; background: transparent; font: inherit; font-size: 13px; color: var(--workspace-text); }
+.topbar-search:focus-within { border-color: #14b8a6; box-shadow: 0 0 0 3px #14b8a622; }
+@media (max-width: 760px) { .app-topbar { padding-left: 56px; } .clinic-chip { display: none; } }

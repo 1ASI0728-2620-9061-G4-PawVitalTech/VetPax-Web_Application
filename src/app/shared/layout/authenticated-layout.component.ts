@@ -1,7 +1,9 @@
 import { Component, signal, inject } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AuthService } from '../../auth/auth.service';
+import { ClinicContextService } from '../clinic-context.service';
+import { userDisplayName } from '../user-claims';
 
 interface NavigationItem {
   label: string;
@@ -19,6 +21,29 @@ interface NavigationItem {
 })
 export class AuthenticatedLayoutComponent {
   private readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
+  private readonly clinicContext = inject(ClinicContextService);
+
+  protected readonly clinicName = signal('');
+  protected readonly userName = userDisplayName(this.auth.accessToken);
+
+  constructor() {
+    if (this.auth.hasRole('veterinarian') || this.auth.hasRole('clinic_administrator')) {
+      this.clinicContext.clinics().subscribe({
+        next: (clinics) => this.clinicName.set(clinics[0]?.name ?? ''),
+        error: () => undefined,
+      });
+    }
+  }
+
+  protected get canSearch(): boolean {
+    return this.auth.hasRole('veterinarian');
+  }
+
+  protected search(value: string): void {
+    const q = value.trim();
+    void this.router.navigate(['/patients'], { queryParams: q ? { q } : {} });
+  }
 
   protected readonly collapsed = signal(
     typeof window !== 'undefined' && window.matchMedia('(max-width: 760px)').matches,
@@ -44,7 +69,7 @@ export class AuthenticatedLayoutComponent {
   }
 
   protected get roleInitial(): string {
-    return this.roleLabel.charAt(0);
+    return (this.userName || this.roleLabel).charAt(0).toUpperCase();
   }
 
   protected toggleSidebar(): void {
