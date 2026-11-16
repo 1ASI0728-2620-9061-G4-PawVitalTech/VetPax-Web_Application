@@ -12,9 +12,8 @@
 
     <section class="page-heading">
       <div>
-        <span>GESTIÓN DE CITAS</span>
         <h1>Agenda <small>Semana activa</small></h1>
-        <p>{{ weekStart | date: 'd MMMM' }} — {{ weekEnd | date: 'd MMMM, y' }}</p>
+        <p>Semana del {{ rangeLabel }}</p>
       </div>
       <div class="week-actions">
         <button mat-icon-button type="button" aria-label="Semana anterior" (click)="previousWeek()">
@@ -25,12 +24,21 @@
           <mat-icon>chevron_right</mat-icon>
         </button>
       </div>
+      <div class="view-switch" role="group" aria-label="Vista de la agenda">
+        <button type="button" [class.on]="view === 'calendar'" (click)="view = 'calendar'">
+          <mat-icon>calendar_view_week</mat-icon>Calendario
+        </button>
+        <button type="button" [class.on]="view === 'list'" (click)="view = 'list'">
+          <mat-icon>view_list</mat-icon>Lista
+        </button>
+      </div>
     </section>
 
     <section class="legend">
       <strong>ESTADO:</strong> <span><i class="pending"></i>Programada</span
       ><span><i class="attended"></i>Atendida</span>
       <span><i class="cancelled"></i>Cancelada</span>
+      <span class="count-chip"><mat-icon>schedule</mat-icon>{{ pendingCount }} consultas programadas</span>
     </section>
 
     @if (loading) {
@@ -51,39 +59,67 @@
         <mat-icon>event_busy</mat-icon>
         <p>No hay clínicas disponibles para consultar.</p>
       </div>
-    } @else {
-      <section class="calendar" aria-label="Agenda semanal">
-        @for (day of weekDays; track day.getTime()) {
-          <article class="day" [class.today]="isToday(day)">
-            <header>
-              <span>{{ day | date: 'EEE' }}</span
-              ><strong>{{ day | date: 'd' }}</strong>
-              @if (isToday(day)) {
-                <small>HOY</small>
-              }
-            </header>
-            <div class="appointments">
-              @for (appointment of appointmentsFor(day); track appointment.appointmentId) {
+    } @else if (view === 'calendar') {
+      <section class="time-grid" aria-label="Agenda semanal">
+        <div class="tg-head">
+          <div class="tg-corner"><mat-icon>schedule</mat-icon></div>
+          @for (day of weekDays; track day.getTime()) {
+            <div class="tg-day" [class.today]="isToday(day)">
+              <span>{{ weekdayShort(day) }}</span>
+              <strong>{{ day.getDate() }}</strong>
+              @if (isToday(day)) { <small>HOY</small> }
+            </div>
+          }
+        </div>
+        <div class="tg-body" [style.height.px]="bodyHeight">
+          <div class="tg-hours">
+            @for (hour of hours; track hour) {
+              <div class="tg-hour" [style.height.px]="hourHeight">{{ hour < 10 ? '0' + hour : hour }}:00</div>
+            }
+          </div>
+          @for (day of weekDays; track day.getTime(); let i = $index) {
+            <div class="tg-col" [class.today]="isToday(day)" [style.background-size]="'100% ' + hourHeight + 'px'">
+              @for (b of columns[i]; track b.appointment.appointmentId) {
                 <button
                   type="button"
-                  class="appointment"
-                  [ngClass]="statusClass(appointment.status)"
-                  (click)="openDetail(appointment.appointmentId)"
+                  class="tg-block"
+                  [ngClass]="statusClass(b.appointment.status)"
+                  [style.top.px]="b.top"
+                  [style.height.px]="b.height"
+                  [style.left.%]="b.left"
+                  [style.width.%]="b.width"
+                  (click)="openDetail(b.appointment.appointmentId)"
                 >
-                  <span class="appointment-time"
-                    >{{ formatTime(appointment.startTime) }} —
-                    {{ formatTime(appointment.endTime) }}</span
+                  <span class="tg-title"
+                    ><strong>{{ b.appointment.petName || 'Mascota' }}</strong
+                    ><em>{{ statusLabel(b.appointment.status) }}</em></span
                   >
-                  <strong>{{ appointment.petName || 'Mascota' }}</strong>
-                  <small>{{ appointment.species || 'Especie no registrada' }}</small>
-                  <p>{{ appointment.reason }}</p>
-                  <span class="status-chip">{{ statusLabel(appointment.status) }}</span>
+                  <span class="tg-time">{{ formatTime(b.appointment.startTime) }} - {{ formatTime(b.appointment.endTime) }}</span>
+                  <span class="tg-reason">{{ b.appointment.reason }}</span>
                 </button>
-              } @empty {
-                <p class="empty-day">Sin citas</p>
               }
             </div>
+          }
+        </div>
+      </section>
+    } @else {
+      <section class="list-view" aria-label="Lista de citas">
+        @for (group of listDays; track group.day.getTime()) {
+          <article class="list-day">
+            <h2 [class.today]="isToday(group.day)">{{ dayTitle(group.day) }}</h2>
+            @for (appointment of group.items; track appointment.appointmentId) {
+              <button type="button" class="list-row" (click)="openDetail(appointment.appointmentId)">
+                <span class="lr-time">{{ formatTime(appointment.startTime) }} - {{ formatTime(appointment.endTime) }}</span>
+                <span class="lr-main"
+                  ><strong>{{ appointment.petName || 'Mascota' }}</strong
+                  ><small>{{ appointment.species || 'Especie no registrada' }} · {{ appointment.reason }}</small></span
+                >
+                <span class="status-chip" [ngClass]="statusClass(appointment.status)">{{ statusLabel(appointment.status) }}</span>
+              </button>
+            }
           </article>
+        } @empty {
+          <p class="state-note">No hay citas en esta semana.</p>
         }
       </section>
     }

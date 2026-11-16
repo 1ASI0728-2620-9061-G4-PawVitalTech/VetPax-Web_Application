@@ -11,6 +11,15 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AgendaAppointment, AppointmentDetail, ClinicDirectoryItem } from './appointment.models';
 import { AppointmentService } from './appointment.service';
+import { formatRange, formatShort, fromApiDate, weekdayShort } from '../shared/date-es';
+
+export interface AgendaBlock {
+  appointment: AgendaAppointment;
+  top: number;
+  height: number;
+  left: number;
+  width: number;
+}
 
 @Component({
   selector: 'app-agenda',
@@ -52,6 +61,60 @@ export class AgendaComponent implements OnInit {
 
   get weekDays(): Date[] {
     return Array.from({ length: 7 }, (_, index) => this.addDays(this.weekStart, index));
+  }
+
+  readonly hourHeight = 64;
+  view: 'calendar' | 'list' = 'calendar';
+  columns: AgendaBlock[][] = [];
+  hours: number[] = [];
+  private gridStart = 8;
+
+  readonly weekdayShort = weekdayShort;
+  readonly formatShort = formatShort;
+
+  get rangeLabel(): string { return formatRange(this.weekStart, this.weekEnd); }
+  get bodyHeight(): number { return this.hours.length * this.hourHeight; }
+  get pendingCount(): number { return this.agenda.filter((a) => this.isPending(a.status)).length; }
+  get listDays(): { day: Date; items: AgendaAppointment[] }[] {
+    return this.weekDays.map((day) => ({ day, items: this.appointmentsFor(day) })).filter((d) => d.items.length);
+  }
+
+  dayTitle(day: Date): string {
+    return new Intl.DateTimeFormat('es-PE', { weekday: 'long', day: 'numeric', month: 'long' }).format(day);
+  }
+
+  private minutes(value: string): number {
+    const [h, m] = value.split(':').map(Number);
+    return h * 60 + (m || 0);
+  }
+
+  private rebuild(): void {
+    const starts = this.agenda.map((a) => Math.floor(this.minutes(a.startTime) / 60));
+    const ends = this.agenda.map((a) => Math.ceil(this.minutes(a.endTime) / 60));
+    this.gridStart = Math.min(8, ...starts);
+    const gridEnd = Math.max(18, ...ends);
+    this.hours = Array.from({ length: gridEnd - this.gridStart }, (_, i) => this.gridStart + i);
+    this.columns = this.weekDays.map((day) => this.layout(day));
+  }
+
+  private layout(day: Date): AgendaBlock[] {
+    const items = this.appointmentsFor(day);
+    const laneEnds: number[] = [];
+    const placed = items.map((appointment) => {
+      const start = this.minutes(appointment.startTime);
+      const end = Math.max(this.minutes(appointment.endTime), start + 30);
+      let lane = laneEnds.findIndex((laneEnd) => laneEnd <= start);
+      if (lane === -1) { lane = laneEnds.length; laneEnds.push(end); } else laneEnds[lane] = end;
+      return { appointment, start, end, lane };
+    });
+    const lanes = Math.max(1, laneEnds.length);
+    return placed.map(({ appointment, start, end, lane }) => ({
+      appointment,
+      top: ((start - this.gridStart * 60) / 60) * this.hourHeight,
+      height: Math.max(36, ((end - start) / 60) * this.hourHeight - 4),
+      left: (lane / lanes) * 100,
+      width: 100 / lanes,
+    }));
   }
 
   get weekEnd(): Date {
@@ -208,6 +271,7 @@ export class AgendaComponent implements OnInit {
       .subscribe({
         next: (agenda) => {
           this.agenda = agenda.appointments;
+          this.rebuild();
           this.loading = false;
         },
         error: (error: HttpErrorResponse) => this.handleError(error),
