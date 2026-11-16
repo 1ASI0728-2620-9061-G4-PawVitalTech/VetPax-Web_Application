@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { ClinicalService } from './clinical.service';
 import { ClinicItem, Patient, clinicId, patientId } from './clinical.models';
+import { formatShort } from '../shared/date-es';
+import { SpeciesGroup, speciesEmoji, speciesGroup, speciesLabel } from '../shared/species';
 
 @Component({
   selector: 'app-clinical-patients',
@@ -15,11 +17,18 @@ import { ClinicItem, Patient, clinicId, patientId } from './clinical.models';
 })
 export class PatientsComponent implements OnInit {
   private readonly api = inject(ClinicalService);
+  private readonly route = inject(ActivatedRoute);
   readonly clinicId = clinicId;
   readonly patientId = patientId;
+  readonly speciesEmoji = speciesEmoji;
+  readonly speciesLabel = speciesLabel;
+  readonly formatShort = formatShort;
   clinics: ClinicItem[] = [];
   selectedClinic = '';
   search = '';
+  speciesFilter: 'all' | SpeciesGroup = 'all';
+  period: 'all' | '7d' | '30d' = 'all';
+  view: 'list' | 'grid' = 'list';
   patients: Patient[] = [];
   loadingClinics = false;
   loading = false;
@@ -28,11 +37,24 @@ export class PatientsComponent implements OnInit {
 
   get filtered(): Patient[] {
     const query = this.search.trim().toLocaleLowerCase();
-    return this.patients.filter(p => [p.name, p.species]
-      .some(value => (value || '').toLocaleLowerCase().includes(query)));
+    const limit = this.period === 'all' ? 0 : Date.now() - (this.period === '7d' ? 7 : 30) * 86_400_000;
+    return this.patients.filter((p) => {
+      if (query && !(p.name || '').toLocaleLowerCase().includes(query) && !(p.species || '').toLocaleLowerCase().includes(query)) return false;
+      if (this.speciesFilter !== 'all' && speciesGroup(p.species) !== this.speciesFilter) return false;
+      if (limit) return !!p.lastAttentionDate && new Date(p.lastAttentionDate).getTime() >= limit;
+      return true;
+    });
   }
 
-  ngOnInit(): void { this.loadClinics(); }
+  count(group: SpeciesGroup): number { return this.patients.filter((p) => speciesGroup(p.species) === group).length; }
+  percent(group: SpeciesGroup): string {
+    return this.patients.length ? `${((this.count(group) / this.patients.length) * 100).toFixed(1)}% del total` : '—';
+  }
+
+  ngOnInit(): void {
+    this.search = this.route.snapshot.queryParamMap.get('q') ?? '';
+    this.loadClinics();
+  }
 
   loadClinics(): void {
     this.loadingClinics = true;
@@ -61,6 +83,13 @@ export class PatientsComponent implements OnInit {
       },
       error: err => { this.error = this.message(err); },
     });
+  }
+
+  query(patient: Patient): Record<string, string> {
+    return {
+      clinicId: this.selectedClinic, name: patient.name, species: patient.species ?? '',
+      lastAttentionDate: patient.lastAttentionDate ?? '',
+    };
   }
 
   private message(err: { status?: number }): string {
