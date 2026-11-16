@@ -1,78 +1,125 @@
 <section class="clinical-page">
   <div *ngIf="!isValidPatientId" class="panel detail-body">
-  <h2>Paciente no válido</h2>
-  <p class="feedback info">
-    El identificador del paciente no es válido.
-    Selecciona un paciente desde el listado de una clínica autorizada.
-  </p>
-  <a routerLink="/patients" class="button">Volver a pacientes</a>
-</div>
+    <h2>Paciente no válido</h2>
+    <p class="feedback info">El identificador del paciente no es válido. Selecciona un paciente desde el listado de una clínica autorizada.</p>
+    <a routerLink="/patients" class="button">Volver a pacientes</a>
+  </div>
 
-<ng-container *ngIf="isValidPatientId">
-  <nav class="breadcrumbs"><a routerLink="/dashboard">Inicio</a> / <a routerLink="/patients">Pacientes</a> / Detalle</nav>
-  <div class="panel patient-head">
-    <div class="avatar" aria-hidden="true">🐾</div>
-    <div class="head-text"><p class="eyebrow">Expediente clínico</p><h1>{{ name }}</h1>
-      <p>{{ species || 'Especie no informada' }}</p></div>
-    <a class="button" *ngIf="clinicId" [routerLink]="['/patients', petId, 'attention']" [queryParams]="{ clinicId: clinicId, name: name }">+ Registrar atención</a>
-  </div>
-  <div class="tabs" aria-label="Secciones del paciente">
-    <button type="button" (click)="selectTab('summary')" [class.active]="tab === 'summary'" [attr.aria-pressed]="tab === 'summary'">Resumen</button>
-    <button type="button" (click)="selectTab('history')" [class.active]="tab === 'history'" [attr.aria-pressed]="tab === 'history'">Historial clínico</button>
-    <button type="button" (click)="selectTab('evolution')" [class.active]="tab === 'evolution'" [attr.aria-pressed]="tab === 'evolution'">Evolución</button>
-  </div>
-  <div class="panel detail-body" *ngIf="tab === 'summary'">
-    <h2>Información del paciente</h2>
-    <dl class="details">
-      <div><dt>Nombre</dt><dd>{{ name }}</dd></div>
-      <div><dt>Especie</dt><dd>{{ species || 'No informada' }}</dd></div>
-      <div><dt>Última atención</dt><dd>{{ lastAttentionDate ? (lastAttentionDate | date:'dd/MM/yyyy') : 'Sin registro' }}</dd></div>
-      <div><dt>ID de mascota</dt><dd class="identifier">{{ petId }}</dd></div>
-    </dl>
-    <p class="muted">Información disponible para el veterinario.</p>
-  </div>
-  <div class="panel detail-body" *ngIf="tab === 'history'">
-    <div class="section-title"><h2>Historial clínico</h2><button type="button" class="button secondary small" (click)="loadHistory()" [disabled]="loadingHistory || !clinicId">Actualizar</button></div>
-    <p *ngIf="loadingHistory" role="status">Cargando historial...</p>
-    <p class="feedback" role="alert" *ngIf="historyError">{{ historyError }}</p>
-    <ng-container *ngIf="history && !loadingHistory">
-      <p class="muted" *ngIf="history.message">{{ history.message }}</p>
-      <p class="empty" *ngIf="!history.attentions.length">Todavía no hay atenciones registradas para este paciente.</p>
-      <article class="record-card" *ngFor="let a of history.attentions">
-        <header class="record-head"><strong>{{ a.attentionDate | date:'dd/MM/yyyy HH:mm' }}</strong></header>
-        <dl class="details">
-          <div><dt>Motivo</dt><dd>{{ a.reason }}</dd></div>
-          <div><dt>Diagnóstico</dt><dd>{{ a.diagnosis }}</dd></div>
-          <div><dt>Tratamiento</dt><dd>{{ a.treatmentSummary }}</dd></div>
-          <div *ngIf="a.observations"><dt>Observaciones</dt><dd>{{ a.observations }}</dd></div>
-        </dl>
-        <ul class="record-indicators" *ngIf="a.indicators.length">
-          <li *ngFor="let i of a.indicators">{{ i.name }}: {{ i.value }} {{ i.unit }}</li>
-        </ul>
-      </article>
-    </ng-container>
-  </div>
-  <div class="panel detail-body" *ngIf="tab === 'evolution'">
-    <div class="section-title"><h2>Evolución clínica</h2><button type="button" class="button secondary small" (click)="loadEvolution()" [disabled]="loadingEvolution || !clinicId">Actualizar</button></div>
-    <p *ngIf="loadingEvolution" role="status">Cargando evolución...</p>
-    <p class="feedback" role="alert" *ngIf="evolutionError">{{ evolutionError }}</p>
-    <ng-container *ngIf="evolution && !loadingEvolution">
-      <p class="muted" *ngIf="!evolution.hasSufficientData">Aún no hay suficientes mediciones comparables para interpretar tendencias.</p>
-      <p class="empty" *ngIf="!indicatorGroups.length">Todavía no hay indicadores clínicos registrados.</p>
-      <div class="evolution-grid" *ngIf="indicatorGroups.length">
-        <article class="indicator-card" *ngFor="let group of indicatorGroups">
-          <div class="indicator-heading"><h3>{{ group.label }}</h3><span>{{ group.unit }}</span></div>
-          <p class="muted">{{ group.entries.length }} medición(es) registrada(s)</p>
-          <svg *ngIf="group.entries.length > 1" class="evolution-chart" viewBox="0 0 312 124" role="img" [attr.aria-label]="'Evolución de ' + group.label">
-            <line x1="16" y1="110" x2="300" y2="110" stroke="#cbd5e1"/>
-            <polyline [attr.points]="points(group)" fill="none" stroke="#0d9488" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-          <table class="indicator-table"><thead><tr><th>Fecha</th><th>Valor</th></tr></thead><tbody>
-            <tr *ngFor="let entry of group.entries"><td>{{ entry.attentionDate | date:'dd/MM/yyyy' }}</td><td>{{ entry.value }} {{ entry.unit }}</td></tr>
-          </tbody></table>
-        </article>
+  <ng-container *ngIf="isValidPatientId">
+    <a class="back-link" routerLink="/patients">← Volver a pacientes</a>
+    <div class="panel patient-head">
+      <div class="avatar" aria-hidden="true">{{ speciesEmoji(species) }}</div>
+      <div class="head-text">
+        <p class="eyebrow">Expediente clínico</p>
+        <h1>{{ name }}</h1>
+        <p class="head-tags">
+          <span class="tag">{{ species ? speciesLabel(species) : 'Especie no informada' }}</span>
+          <span class="tag soft">Última atención: {{ lastAttentionDate ? formatShort(lastAttentionDate) : 'Sin registro' }}</span>
+        </p>
       </div>
-    </ng-container>
-  </div>
+      <div class="head-actions" *ngIf="clinicId">
+        <a class="button secondary" routerLink="/agenda">Agendar cita</a>
+        <a class="button" [routerLink]="['/patients', petId, 'attention']" [queryParams]="{ clinicId: clinicId, name: name }">+ Registrar atención</a>
+      </div>
+    </div>
+
+    <div class="tabs" aria-label="Secciones del paciente">
+      <button type="button" (click)="selectTab('summary')" [class.active]="tab === 'summary'" [attr.aria-pressed]="tab === 'summary'">Resumen</button>
+      <button type="button" (click)="selectTab('history')" [class.active]="tab === 'history'" [attr.aria-pressed]="tab === 'history'">Historial clínico</button>
+      <button type="button" (click)="selectTab('evolution')" [class.active]="tab === 'evolution'" [attr.aria-pressed]="tab === 'evolution'">Evolución</button>
+      <a class="tab-link" [routerLink]="['/nutrition', 'patients', petId]">Plan alimentario ↗</a>
+    </div>
+
+    <div class="summary-grid" *ngIf="tab === 'summary'">
+      <div>
+        <div class="panel detail-body">
+          <h2>Información del paciente</h2>
+          <dl class="details">
+            <div><dt>Nombre</dt><dd>{{ name }}</dd></div>
+            <div><dt>Especie</dt><dd>{{ species ? speciesLabel(species) : 'No informada' }}</dd></div>
+            <div><dt>Última atención</dt><dd>{{ lastAttentionDate ? formatShort(lastAttentionDate) : 'Sin registro' }}</dd></div>
+            <div><dt>ID de mascota</dt><dd class="identifier">{{ petId }}</dd></div>
+          </dl>
+        </div>
+        <div class="panel detail-body">
+          <h2>Información clínica</h2>
+          <p *ngIf="loadingHistory" role="status">Cargando historial...</p>
+          <p class="feedback" role="alert" *ngIf="historyError">{{ historyError }}</p>
+          <ng-container *ngIf="!loadingHistory && !historyError">
+            <p class="empty" *ngIf="!latestAttention">Todavía no hay atenciones registradas para este paciente.</p>
+            <ng-container *ngIf="latestAttention as a">
+              <p class="muted">Última atención: {{ formatShort(a.attentionDate) }}</p>
+              <div class="clinical-box"><span>Diagnóstico</span><strong>{{ a.diagnosis }}</strong></div>
+              <dl class="details">
+                <div><dt>Motivo</dt><dd>{{ a.reason }}</dd></div>
+                <div><dt>Tratamiento</dt><dd>{{ a.treatmentSummary }}</dd></div>
+                <div *ngIf="a.observations"><dt>Observaciones</dt><dd>{{ a.observations }}</dd></div>
+              </dl>
+            </ng-container>
+          </ng-container>
+        </div>
+      </div>
+      <aside>
+        <div class="panel next-card">
+          <span class="pill">Próxima cita programada</span>
+          <p *ngIf="nextAppointmentState === 'loading'" role="status" class="muted">Buscando citas...</p>
+          <p *ngIf="nextAppointmentState === 'error'" class="muted">No se pudo consultar la próxima cita.</p>
+          <ng-container *ngIf="nextAppointmentState === 'done'">
+            <ng-container *ngIf="nextAppointment as n; else noNext">
+              <h3>{{ nextAppointmentDate(n) }}</h3>
+              <p class="muted">{{ n.startTime.slice(0, 5) }} — {{ n.endTime.slice(0, 5) }}</p>
+              <div class="clinical-box"><span>Motivo</span><strong>{{ n.reason }}</strong></div>
+              <a class="button secondary small" routerLink="/agenda">Ver en agenda</a>
+            </ng-container>
+            <ng-template #noNext><p class="muted">No hay citas programadas en los próximos 60 días.</p></ng-template>
+          </ng-container>
+        </div>
+      </aside>
+    </div>
+
+    <div class="panel detail-body" *ngIf="tab === 'history'">
+      <div class="section-title"><h2>Historial clínico</h2><button type="button" class="button secondary small" (click)="loadHistory()" [disabled]="loadingHistory || !clinicId">Actualizar</button></div>
+      <p *ngIf="loadingHistory" role="status">Cargando historial...</p>
+      <p class="feedback" role="alert" *ngIf="historyError">{{ historyError }}</p>
+      <ng-container *ngIf="history && !loadingHistory">
+        <p class="muted" *ngIf="history.message">{{ history.message }}</p>
+        <p class="empty" *ngIf="!history.attentions.length">Todavía no hay atenciones registradas para este paciente.</p>
+        <article class="record-card" *ngFor="let a of history.attentions">
+          <header class="record-head"><strong>{{ a.attentionDate | date:'dd/MM/yyyy HH:mm' }}</strong></header>
+          <dl class="details">
+            <div><dt>Motivo</dt><dd>{{ a.reason }}</dd></div>
+            <div><dt>Diagnóstico</dt><dd>{{ a.diagnosis }}</dd></div>
+            <div><dt>Tratamiento</dt><dd>{{ a.treatmentSummary }}</dd></div>
+            <div *ngIf="a.observations"><dt>Observaciones</dt><dd>{{ a.observations }}</dd></div>
+          </dl>
+          <ul class="record-indicators" *ngIf="a.indicators.length">
+            <li *ngFor="let i of a.indicators">{{ i.name }}: {{ i.value }} {{ i.unit }}</li>
+          </ul>
+        </article>
+      </ng-container>
+    </div>
+
+    <div class="panel detail-body" *ngIf="tab === 'evolution'">
+      <div class="section-title"><h2>Evolución clínica</h2><button type="button" class="button secondary small" (click)="loadEvolution()" [disabled]="loadingEvolution || !clinicId">Actualizar</button></div>
+      <p *ngIf="loadingEvolution" role="status">Cargando evolución...</p>
+      <p class="feedback" role="alert" *ngIf="evolutionError">{{ evolutionError }}</p>
+      <ng-container *ngIf="evolution && !loadingEvolution">
+        <p class="muted" *ngIf="!evolution.hasSufficientData">Aún no hay suficientes mediciones comparables para interpretar tendencias.</p>
+        <p class="empty" *ngIf="!indicatorGroups.length">Todavía no hay indicadores clínicos registrados.</p>
+        <div class="evolution-grid" *ngIf="indicatorGroups.length">
+          <article class="indicator-card" *ngFor="let group of indicatorGroups">
+            <div class="indicator-heading"><h3>{{ group.label }}</h3><span>{{ group.unit }}</span></div>
+            <p class="muted">{{ group.entries.length }} medición(es) registrada(s)</p>
+            <svg *ngIf="group.entries.length > 1" class="evolution-chart" viewBox="0 0 312 124" role="img" [attr.aria-label]="'Evolución de ' + group.label">
+              <line x1="16" y1="110" x2="300" y2="110" stroke="#cbd5e1"/>
+              <polyline [attr.points]="points(group)" fill="none" stroke="#0d9488" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <table class="indicator-table"><thead><tr><th>Fecha</th><th>Valor</th></tr></thead><tbody>
+              <tr *ngFor="let entry of group.entries"><td>{{ entry.attentionDate | date:'dd/MM/yyyy' }}</td><td>{{ entry.value }} {{ entry.unit }}</td></tr>
+            </tbody></table>
+          </article>
+        </div>
+      </ng-container>
+    </div>
   </ng-container>
 </section>

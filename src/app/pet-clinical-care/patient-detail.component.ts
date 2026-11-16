@@ -2,9 +2,14 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { ClinicalService } from './clinical.service';
-import { ClinicalEvolution, ClinicalRecordHistory, EvolutionEntry } from './clinical.models';
+import { ClinicalEvolution, ClinicalRecordAttention, ClinicalRecordHistory, EvolutionEntry } from './clinical.models';
+import { AppointmentService } from '../appointment-management/appointment.service';
+import { AgendaAppointment } from '../appointment-management/appointment.models';
+import { addDays, formatLong, formatShort, fromApiDate, toApiDate } from '../shared/date-es';
+import { speciesEmoji, speciesLabel } from '../shared/species';
 
 interface IndicatorGroup { label: string; unit: string; entries: EvolutionEntry[]; }
+type Tab = 'summary' | 'evolution' | 'history';
 
 @Component({
   selector: 'app-clinical-patient-detail',
@@ -16,22 +21,35 @@ interface IndicatorGroup { label: string; unit: string; entries: EvolutionEntry[
 export class PatientDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly api = inject(ClinicalService);
+  private readonly appointments = inject(AppointmentService);
+  readonly speciesEmoji = speciesEmoji;
+  readonly speciesLabel = speciesLabel;
+  readonly formatShort = formatShort;
+
   petId = '';
   clinicId = '';
   name = '';
   species = '';
   lastAttentionDate = '';
-  tab: 'summary' | 'evolution' | 'history' = 'summary';
+  tab: Tab = 'summary';
+
   evolution?: ClinicalEvolution;
   indicatorGroups: IndicatorGroup[] = [];
-  history?: ClinicalRecordHistory;
-  loadingHistory = false;
-  historyError = '';  loadingEvolution = false;
+  loadingEvolution = false;
   evolutionError = '';
 
-get isValidPatientId(): boolean {
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(this.petId);
-}
+  history?: ClinicalRecordHistory;
+  loadingHistory = false;
+  historyError = '';
+
+  nextAppointment?: AgendaAppointment;
+  nextAppointmentState: 'idle' | 'loading' | 'done' | 'error' = 'idle';
+
+  get isValidPatientId(): boolean {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(this.petId);
+  }
+
+  get latestAttention(): ClinicalRecordAttention | undefined { return this.history?.attentions?.[0]; }
 
   ngOnInit(): void {
     this.petId = this.route.snapshot.paramMap.get('petId') || '';
@@ -39,24 +57,42 @@ get isValidPatientId(): boolean {
     this.name = this.route.snapshot.queryParamMap.get('name') || 'Paciente';
     this.species = this.route.snapshot.queryParamMap.get('species') || '';
     this.lastAttentionDate = this.route.snapshot.queryParamMap.get('lastAttentionDate') || '';
-  }
-
-selectTab(tab: 'summary' | 'evolution' | 'history'): void {
-  this.tab = tab;
-  if (tab === 'history' && !this.history && !this.loadingHistory) {
-    this.loadHistory();
-  }
-
-  if (tab === 'evolution') {
-    if (!this.isValidPatientId) {
-      this.evolutionError = 'El identificador del paciente no es válido.';
-    } else if (!this.clinicId) {
-      this.evolutionError = 'Selecciona un paciente desde una clínica autorizada para consultar su evolución.';
-    } else if (!this.evolution && !this.loadingEvolution) {
-      this.loadEvolution();
+    if (this.isValidPatientId && this.clinicId) {
+      this.loadHistory();
+      this.loadNextAppointment();
     }
   }
-}
+
+  selectTab(tab: Tab): void {
+    this.tab = tab;
+    if (tab === 'evolution') {
+      if (!this.isValidPatientId) {
+        this.evolutionError = 'El identificador del paciente no es válido.';
+      } else if (!this.clinicId) {
+        this.evolutionError = 'Selecciona un paciente desde una clínica autorizada para consultar su evolución.';
+      } else if (!this.evolution && !this.loadingEvolution) {
+        this.loadEvolution();
+      }
+    }
+  }
+
+  nextAppointmentDate(a: AgendaAppointment): string { return formatLong(fromApiDate(a.date)); }
+
+  loadNextAppointment(): void {
+    this.nextAppointmentState = 'loading';
+    const today = new Date();
+    this.appointments.agenda(this.clinicId, toApiDate(today), toApiDate(addDays(today, 60))).subscribe({
+      next: (agenda) => {
+        const now = `${toApiDate(today)} ${String(today.getHours()).padStart(2, '0')}:${String(today.getMinutes()).padStart(2, '0')}`;
+        this.nextAppointment = (agenda.appointments ?? [])
+          .filter((a) => a.petId === this.petId && a.status.toLowerCase() === 'pending' && `${a.date} ${a.startTime.slice(0, 5)}` >= now)
+          .sort((x, y) => `${x.date} ${x.startTime}`.localeCompare(`${y.date} ${y.startTime}`))[0];
+        this.nextAppointmentState = 'done';
+      },
+      error: () => (this.nextAppointmentState = 'error'),
+    });
+  }
+
   loadHistory(): void {
     if (!this.isValidPatientId || !this.clinicId) {
       this.historyError = 'Abre este paciente desde una clínica autorizada para consultar su historial.';
